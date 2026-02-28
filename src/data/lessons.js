@@ -1126,6 +1126,97 @@ const lessons = [
         xpReward: 25,
         levelRequired: 7,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 9 — Beyond useState =====
+    {
+        id: 113,
+        title: 'Prop Drilling Problem',
+        shortDescription: 'The issue of passing props through many layers of components.',
+        fullExplanation: 'When you build a deep component tree, you often need state from the top level (like a user object in `<App />`) down at the very bottom (like a `<ProfileAvatar />`). Passing this state as a prop through every intermediate component (A -> B -> C -> D) is called "Prop Drilling". It makes intermediate components messy and brittle, as they have to receive and pass props they don\'t even use.',
+        exampleCode: `function PropDrillingDemo() {\n  const [user] = React.useState({ name: 'Alex' });\n\n  // App passes to Layout -> Header -> UserMenu -> Avatar\n  return (\n    <div style={{padding:'16px',border:'1px dashed #7c3aed',borderRadius:'8px'}}>\n      <h3 style={{color:'#7c3aed',marginTop:0}}>🕳️ Prop Drilling</h3>\n      <Layout user={user} />\n    </div>\n  );\n}\n\nfunction Layout({ user }) {\n  return <div style={{paddingLeft:'16px',borderLeft:'2px solid #333'}}><Header user={user} /></div>;\n}\n\nfunction Header({ user }) {\n  return <div style={{paddingLeft:'16px',borderLeft:'2px solid #555'}}><UserMenu user={user} /></div>;\n}\n\nfunction UserMenu({ user }) {\n  return (\n    <div style={{paddingLeft:'16px',borderLeft:'2px solid #10b981'}}>\n      <span style={{color:'#06b6d4'}}>Hello, {user.name}!</span>\n    </div>\n  );\n}\n\nrender(<PropDrillingDemo />);`,
+        xpReward: 10,
+        levelRequired: 8,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 114,
+        title: 'Context Limitations',
+        shortDescription: 'Why React Context isn\'t a replacement for global state managers.',
+        fullExplanation: 'React Context solves Prop Drilling, but it has a major performance flaw: whenever the Context value changes, *every* component that calls `useContext(MyContext)` re-renders, even if they only care about a tiny piece of that state. It is great for low-velocity data (themes, auth status), but terrible for high-velocity, frequently changing global state.',
+        exampleCode: `function ContextLimitationsConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚠️ Context Limitations</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #ef4444'}}>\n        <p style={{margin:'0 0 8px',color:'#ccc'}}>Imagine a massive <code>AppStoreContext</code>:</p>\n        <ul style={{color:'#f59e0b',paddingLeft:'20px',margin:0,lineHeight:'1.5'}}>\n          <li>Contains <code>user</code>, <code>theme</code>, and <code>mouseCoordinates</code>.</li>\n          <li><span style={{color:'#fff'}}>Header</span> reads <code>user</code>.</li>\n          <li><span style={{color:'#fff'}}>Canvas</span> updates <code>mouseCoordinates</code> 60 times a second.</li>\n        </ul>\n        <p style={{color:'#ef4444',fontWeight:'bold',marginTop:'12px'}}>\n           Result: The entire App (including the Header) re-renders 60 frames a second, destroying performance.\n        </p>\n      </div>\n    </div>\n  );\n}\n\nrender(<ContextLimitationsConcept />);`,
+        xpReward: 15,
+        levelRequired: 8,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 115,
+        title: 'Redux Fundamentals',
+        shortDescription: 'The original, strict unidirectional data flow architecture.',
+        fullExplanation: 'Redux is a standalone library based on the Flux architecture. It separates state into a single global Object called the **Store**. To change state, components cannot mutate it directly; they must `dispatch` an **Action** (an object describing what happened). A **Reducer** function takes the old state and the action, and returns a totally new state copy.',
+        exampleCode: `function ReduxConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔀 Redux Architecture</h3>\n      <div style={{display:'flex',flexDirection:'column',gap:'8px',fontFamily:'monospace',fontSize:'13px'}}>\n        <div style={{background:'#1a1a2e',padding:'8px',borderRadius:'4px',borderLeft:'4px solid #3b82f6'}}>\n          <span style={{color:'#888'}}>1. Action: </span><br/>\n          <span style={{color:'#06b6d4'}}>{'{ type: "ADD_TODO", payload: "Learn Redux" }'}</span>\n        </div>\n        <div style={{textAlign:'center',color:'#555'}}>⬇️ flows into</div>\n        <div style={{background:'#1a1a2e',padding:'8px',borderRadius:'4px',borderLeft:'4px solid #10b981'}}>\n          <span style={{color:'#888'}}>2. Reducer: </span><br/>\n          <span style={{color:'#10b981'}}>(state, action) =&gt; newState</span>\n        </div>\n        <div style={{textAlign:'center',color:'#555'}}>⬇️ updates</div>\n         <div style={{background:'#1a1a2e',padding:'8px',borderRadius:'4px',borderLeft:'4px solid #f59e0b'}}>\n          <span style={{color:'#888'}}>3. Store: </span><br/>\n          <span style={{color:'#f59e0b'}}>The single source of truth</span>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<ReduxConcept />);`,
+        xpReward: 15,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 116,
+        title: 'Redux Toolkit (RTK)',
+        shortDescription: 'The modern, opinionated, and easier way to write Redux.',
+        fullExplanation: 'Classic Redux required tons of "boilerplate" (action types, action creators, massive switch statements). Redux Toolkit (RTK) is the official recommended wrapper. It provides `createSlice()`, which automatically generates actions and reducers. It also uses the "Immer" library under the hood, allowing you to "mutate" state directly in your reducers without breaking immutability rules!',
+        exampleCode: `function RTKConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🧰 Redux Toolkit</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px dashed #3b82f6',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        const counterSlice = <span style={{color:'#f59e0b'}}>createSlice</span>({'{'}<br/>\n        &nbsp;&nbsp;name: 'counter',<br/>\n        &nbsp;&nbsp;initialState: 0,<br/>\n        &nbsp;&nbsp;reducers: {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;increment: (state) =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#10b981'}}>// Looks like a mutation, but RTK safely translates</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#10b981'}}>// it into a new immutable copy using Immer!</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state.value += 1;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;{'}'}<br/>\n        &nbsp;&nbsp;{'}'}<br/>\n        {'}'});<br/><br/>\n        export const { '{ increment }' } = counterSlice.actions;\n      </div>\n    </div>\n  );\n}\n\nrender(<RTKConcept />);`,
+        xpReward: 20,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 117,
+        title: 'Zustand',
+        shortDescription: 'A small, fast, and scalable bearbones state-management solution.',
+        fullExplanation: 'Zustand (German for "State") has become extremely popular as a lightweight alternative to Redux. It removes the need for Action Creators and complex Reducers. You simply create a custom hook storing your state and the functions that update that state. It solves the React Context performance flaw by allowing components to select exactly which piece of state to subscribe to.',
+        exampleCode: `function ZustandConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🐻 Zustand</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #f59e0b',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// 1. Create the store</span><br/>\n        const useStore = <span style={{color:'#f59e0b'}}>create</span>((set) =&gt; ({'{'}<br/>\n        &nbsp;&nbsp;bears: 0,<br/>\n        &nbsp;&nbsp;increasePopulation: () =&gt; set((state) =&gt; ({'{'} bears: state.bears + 1 {'}'})),<br/>\n        &nbsp;&nbsp;removeAllBears: () =&gt; set({'{'} bears: 0 {'}'}),<br/>\n        {'}'}));<br/><br/>\n        <span style={{color:'#888'}}>// 2. Bind component to specific state (no extra re-renders!)</span><br/>\n        function BearCounter() {'{'}<br/>\n        &nbsp;&nbsp;const bears = <span style={{color:'#10b981'}}>useStore</span>((state) =&gt; state.bears);<br/>\n        &nbsp;&nbsp;return &lt;h1&gt;&#123;bears&#125; around here ...&lt;/h1&gt;;<br/>\n        {'}'}\n      </div>\n    </div>\n  );\n}\n\nrender(<ZustandConcept />);`,
+        xpReward: 20,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 118,
+        title: 'Recoil',
+        shortDescription: 'An atomic state management library from Facebook.',
+        fullExplanation: 'Recoil takes an "atomic" approach to state. Instead of one massive global store object (like Redux), you define tiny, independent pieces of state called **Atoms**. A component can subscribe to read/write a specific Atom. Then you create **Selectors**, which are pure functions that derive computed state from one or more Atoms.',
+        exampleCode: `function RecoilConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚛️ Recoil</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #06b6d4',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        const textState = <span style={{color:'#f59e0b'}}>atom</span>({'{'}<br/>\n        &nbsp;&nbsp;key: 'textState', <span style={{color:'#888'}}>// unique ID</span><br/>\n        &nbsp;&nbsp;default: '',<br/>\n        {'}'});<br/><br/>\n        const charCountState = <span style={{color:'#10b981'}}>selector</span>({'{'}<br/>\n        &nbsp;&nbsp;key: 'charCountState',<br/>\n        &nbsp;&nbsp;get: ({'{'}get{'}'}) =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;const text = get(textState);<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;return text.length;<br/>\n        &nbsp;&nbsp;{'}'},<br/>\n        {'}'});<br/><br/>\n        <span style={{color:'#888'}}>// Use it just like useState!</span><br/>\n        const [text, setText] = <span style={{color:'#3b82f6'}}>useRecoilState</span>(textState);\n      </div>\n    </div>\n  );\n}\n\nrender(<RecoilConcept />);`,
+        xpReward: 20,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 119,
+        title: 'Jotai',
+        shortDescription: 'A minimalist, primitive atomic state manager without string keys.',
+        fullExplanation: 'Jotai takes the Recoil "atomic" concept but removes the boilerplate. In Recoil, every atom needs a unique string key (`key: "user"`), which can cause naming collisions and makes code verbose. Jotai atoms don\'t need keys; the object reference itself is the layout. It\'s incredibly tiny, fast, and integrates beautifully with React Suspense.',
+        exampleCode: `function JotaiConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>👻 Jotai</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #fff',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// No keys required!</span><br/>\n        const countAtom = <span style={{color:'#f59e0b'}}>atom</span>(0);<br/>\n        const doubleAtom = <span style={{color:'#10b981'}}>atom</span>((get) =&gt; get(countAtom) * 2);<br/><br/>\n        function Counter() {'{'}<br/>\n        &nbsp;&nbsp;const [count, setCount] = <span style={{color:'#3b82f6'}}>useAtom</span>(countAtom);<br/>\n        &nbsp;&nbsp;const [double] = <span style={{color:'#3b82f6'}}>useAtom</span>(doubleAtom);<br/><br/>\n        &nbsp;&nbsp;return &lt;button onClick=&#123;()=&gt;setCount(c=&gt;c+1)&#125;&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&#123;count&#125; (Double: &#123;double&#125;)<br/>\n        &nbsp;&nbsp;&lt;/button&gt;;<br/>\n        {'}'}\n      </div>\n    </div>\n  );\n}\n\nrender(<JotaiConcept />);`,
+        xpReward: 20,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 120,
+        title: 'MobX',
+        shortDescription: 'Transparent Functional Reactive Programming (TFRP).',
+        fullExplanation: 'MobX takes an entirely different approach. Instead of strict immutability, MobX embraces mutability. You create a state object and wrap it in `makeAutoObservable`. You then wrap your React components in `observer()`. When you simply reassign a value (`store.user.name = "Bob"`), MobX magically tracks exactly which components used that property and triggers re-renders automatically.',
+        exampleCode: `function MobXConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🪄 MobX</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #e28743',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// OOP Style class</span><br/>\n        class Timer {'{'}<br/>\n        &nbsp;&nbsp;secondsPassed = 0;<br/>\n        &nbsp;&nbsp;constructor() {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#f59e0b'}}>makeAutoObservable</span>(this);<br/>\n        &nbsp;&nbsp;{'}'}<br/>\n        &nbsp;&nbsp;increase() {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;this.secondsPassed += 1; <span style={{color:'#888'}}>// Direct mutation!</span><br/>\n        &nbsp;&nbsp;{'}'}<br/>\n        {'}'}<br/><br/>\n        const myTimer = new Timer();<br/><br/>\n        <span style={{color:'#888'}}>// Tell React to listen to mutations</span><br/>\n        const TimerView = <span style={{color:'#10b981'}}>observer</span>((props) =&gt; (<br/>\n        &nbsp;&nbsp;&lt;span&gt;Seconds: &#123;props.timer.secondsPassed&#125;&lt;/span&gt;<br/>\n        ));\n      </div>\n    </div>\n  );\n}\n\nrender(<MobXConcept />);`,
+        xpReward: 20,
+        levelRequired: 8,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 121,
+        title: 'Server State vs UI State',
+        shortDescription: 'Choosing the right tool for the right job.',
+        fullExplanation: 'The biggest architectural mistake React developers make is putting API data into global stores (like Redux or Zustand). API data is "Server State" (it belongs to the database, is out of your control, and needs caching). Use TanStack Query for Server State. Only use Redux/Zustand for true "UI State" or "Client State" (e.g., is the dark mode toggle on? Is the mobile menu open?).',
+        exampleCode: `function StateSplitConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚖️ Server State vs UI State</h3>\n      <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>\n        <div style={{flex:1,padding:'12px',background:'#1a2e1a',border:'1px solid #10b981',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#10b981'}}>Server State</h4>\n          <ul style={{fontSize:'13px',color:'#ccc',paddingLeft:'16px',margin:0}}>\n            <li>User profiles from DB</li>\n            <li>Product inventories</li>\n            <li>Auth Tokens (from API)</li>\n          </ul>\n          <div style={{marginTop:'12px',paddingTop:'12px',borderTop:'1px solid #333',color:'#f59e0b',fontWeight:'bold',fontSize:'12px'}}>\n            Use: TanStack Query, SWR, or Apollo\n          </div>\n        </div>\n        \n        <div style={{flex:1,padding:'12px',background:'#1a1a2e',border:'1px solid #3b82f6',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#3b82f6'}}>UI / Client State</h4>\n          <ul style={{fontSize:'13px',color:'#ccc',paddingLeft:'16px',margin:0}}>\n             <li>Current Theme (Dark/Light)</li>\n             <li>Sidebar expanded state</li>\n             <li>Multi-step form wizard data</li>\n          </ul>\n          <div style={{marginTop:'12px',paddingTop:'12px',borderTop:'1px solid #333',color:'#f59e0b',fontWeight:'bold',fontSize:'12px'}}>\n            Use: Zustand, Redux, Context\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<StateSplitConcept />);`,
+        xpReward: 15,
+        levelRequired: 8,
+        difficulty: 'Advanced'
     }
 ];
 
