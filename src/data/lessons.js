@@ -591,6 +591,97 @@ const lessons = [
         xpReward: 15,
         levelRequired: 2,
         difficulty: 'Intermediate'
+    },
+    // ===== LEVEL 4 — Effects & Lifecycle =====
+    {
+        id: 60,
+        title: 'useEffect Basics',
+        shortDescription: 'Execute side effects like data fetching or subscriptions in your components.',
+        fullExplanation: 'The `useEffect` hook lets you synchronize a component with an external system. A "side effect" is anything that affects something outside the component (e.g., fetching data, directly updating the DOM, timers). By default, `useEffect` runs AFTER every render. You pass it a setup function which contains your effect logic.',
+        exampleCode: `function EffectBasics() {\n  const [clicks, setClicks] = React.useState(0);\n\n  // Runs after EVERY render\n  React.useEffect(() => {\n    // Note: We can't actually change the browser tab title in this sandbox,\n    // but normally you would use document.title here.\n    console.log(\`Effect ran! Clicks: \${clicks}\`);\n  });\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>⚡ useEffect Basics</h3>\n      <p style={{color:'#888',fontSize:'14px'}}>Check the console (or imagine the tab title changing).</p>\n      <button \n        onClick={() => setClicks(c => c + 1)} \n        style={{padding:'8px 16px',borderRadius:'6px',background:'#10b981',color:'#fff',border:'none',cursor:'pointer',fontSize:'16px'}}\n      >\n        Clicked {clicks} times\n      </button>\n    </div>\n  );\n}\n\nrender(<EffectBasics />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 61,
+        title: 'Dependency Array',
+        shortDescription: 'Control exactly when your effects run using the dependency array.',
+        fullExplanation: 'By default, `useEffect` runs after every render. To optimize, you can pass a dependency array as the second argument. If you pass an empty array `[]`, the effect runs ONLY ONCE after the initial mount. If you pass variables `[x, y]`, it runs only when `x` or `y` change. If you omit the array completely, it runs on every single render.',
+        exampleCode: `function DependencyArray() {\n  const [count, setCount] = React.useState(0);\n  const [text, setText] = React.useState('');\n  const [logs, setLogs] = React.useState([]);\n\n  const log = msg => setLogs(p => [msg, ...p].slice(0, 4));\n\n  // Runs ONLY ONCE (on mount)\n  React.useEffect(() => {\n    log('🚀 Component MOUNTED (empty array)');\n  }, []);\n\n  // Runs when 'count' changes\n  React.useEffect(() => {\n    log(\`🔢 Count changed to \${count} (dependency: count)\`);\n  }, [count]);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📦 Dependency Array</h3>\n      <div style={{display:'flex',gap:'8px',marginBottom:'12px'}}>\n        <button onClick={() => setCount(c => c + 1)} style={{padding:'6px 12px',borderRadius:'4px',background:'#f59e0b',color:'#000',border:'none'}}>Increase Count: {count}</button>\n        <input value={text} onChange={e => setText(e.target.value)} placeholder="Type (no effect triggered)" style={{padding:'6px',borderRadius:'4px',border:'1px solid #444',background:'#1a1a2e',color:'#fff'}} />\n      </div>\n      <div style={{background:'#12122a',padding:'8px',borderRadius:'6px',minHeight:'100px'}}>\n        <p style={{color:'#888',fontSize:'12px',margin:'0 0 4px'}}>Effect Logs:</p>\n        {logs.map((l, i) => <p key={i} style={{color:'#06b6d4',margin:'2px 0',fontSize:'13px'}}>{l}</p>)}\n      </div>\n    </div>\n  );\n}\n\nrender(<DependencyArray />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 62,
+        title: 'Cleanup Function',
+        shortDescription: 'Clean up subscriptions, timers, and listeners to prevent memory leaks.',
+        fullExplanation: 'Effects often create resources that need to be cleaned up (like `setInterval` or event listeners). You can return a "cleanup function" from your effect. React runs this cleanup function BEFORE the component unmounts, and also BEFORE running the effect again on subsequent re-renders.',
+        exampleCode: `function Timer() {\n  const [seconds, setSeconds] = React.useState(0);\n\n  React.useEffect(() => {\n    console.log('Starting timer...');\n    const intervalId = setInterval(() => {\n      setSeconds(s => s + 1);\n    }, 1000);\n\n    // CLEANUP FUNCTION\n    return () => {\n      console.log('Cleaning up timer...');\n      clearInterval(intervalId);\n    };\n  }, []); // Run once on mount\n\n  return <p style={{color:'#10b981',fontSize:'20px',margin:0}}>⏳ Active: {seconds}s</p>;\n}\n\nfunction CleanupDemo() {\n  const [showTimer, setShowTimer] = React.useState(false);\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>🧹 Cleanup Function</h3>\n      <div style={{minHeight:'40px',marginBottom:'12px'}}>\n        {showTimer ? <Timer /> : <p style={{color:'#888',margin:0}}>Timer is unmounted.</p>}\n      </div>\n      <button \n        onClick={() => setShowTimer(!showTimer)} \n        style={{padding:'8px 16px',borderRadius:'6px',background:showTimer ? '#ef4444' : '#3b82f6',color:'#fff',border:'none',cursor:'pointer'}}\n      >\n        {showTimer ? 'Unmount Timer' : 'Mount Timer'}\n      </button>\n    </div>\n  );\n}\n\nrender(<CleanupDemo />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 63,
+        title: 'Mount vs Re-render vs Unmount',
+        shortDescription: 'Understand the complete component lifecycle and how effects align with it.',
+        fullExplanation: 'Components go through a lifecycle: Mounting (added to screen), Re-rendering (state/props changed), and Unmounting (removed from screen). Using `useEffect` with dependency arrays allows you to hook into these specific phases. `[]` = Mount only. Return function inside `[]` = Unmount only. `[deps]` = Update on specific changes.',
+        exampleCode: `function LifecycleLogger({ id }) {\n  React.useEffect(() => {\n    console.log(\`[MOUNT] Component \${id} mounted\`);\n    \n    return () => {\n      console.log(\`[UNMOUNT] Component \${id} unmounted\`);\n    };\n  }, [id]); // If ID changes, it unmounts the old one and mounts the new one!\n\n  return <div style={{padding:'20px',background:'#3b82f6',color:'#fff',borderRadius:'8px',fontWeight:'bold'}}>Component {id} is alive!</div>;\n}\n\nfunction LifecycleDemo() {\n  const [activeId, setActiveId] = React.useState(1);\n  const [show, setShow] = React.useState(true);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔄 Component Lifecycle</h3>\n      <div style={{display:'flex',gap:'8px',marginBottom:'12px'}}>\n        <button onClick={() => setShow(!show)} style={{padding:'6px 10px',background:'#ef4444',color:'#fff',border:'none',borderRadius:'4px'}}>Toggle Mount/Unmount</button>\n        <button onClick={() => setActiveId(id => id + 1)} disabled={!show} style={{padding:'6px 10px',background:'#10b981',color:'#fff',border:'none',borderRadius:'4px',opacity:show?1:0.5}}>Change ID (Force Re-mount)</button>\n      </div>\n      <div style={{minHeight:'80px',display:'flex',alignItems:'center',justifyContent:'center',border:'1px dashed #444',borderRadius:'8px'}}>\n        {show ? <LifecycleLogger id={activeId} /> : <span style={{color:'#888'}}>Destroyed</span>}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',textAlign:'center',marginTop:'8px'}}>Open developer console to see lifecycle logs!</p>\n    </div>\n  );\n}\n\nrender(<LifecycleDemo />);`,
+        xpReward: 10,
+        levelRequired: 3,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 64,
+        title: 'Avoiding Infinite Loops',
+        shortDescription: 'Diagnose and fix the dreaded useEffect infinite re-render loop.',
+        fullExplanation: 'An infinite loop happens when an effect updates a state, which triggers a re-render, which runs the effect again, which updates the state again... This often occurs when you omit a dependency array entirely, or when you put an object/array/function in the dependency array that gets recreated on every render (due to changing references).',
+        exampleCode: `function InfiniteLoopDefense() {\n  const [trigger, setTrigger] = React.useState(0);\n  const [logs, setLogs] = React.useState(['Waiting...']);\n\n  // ❌ BAD: No dependency array + State update = Infinite Loop!\n  // React.useEffect(() => { setTrigger(t => t + 1); });\n\n  // ✅ GOOD: Empty array runs once.\n  // ✅ GOOD: Passing a primitive value avoids reference equality issues.\n  React.useEffect(() => {\n    setLogs(p => [\`Effect ran for trigger: \${trigger}\`, ...p].slice(0, 4));\n  }, [trigger]); // Only run when 'trigger' actually changes\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔁 Infinite Loop Defense</h3>\n      <button \n        onClick={() => setTrigger(t => t + 1)} \n        style={{padding:'8px 16px',borderRadius:'6px',background:'#f59e0b',color:'#000',border:'none',cursor:'pointer',marginBottom:'12px',fontWeight:'bold'}}\n      >\n        Safely Trigger Effect\n      </button>\n      <div style={{background:'#1a1a2e',padding:'8px',borderRadius:'8px',border:'1px solid #333'}}>\n        {logs.map((l, i) => <p key={i} style={{color: i===0 ? '#10b981' : '#888', margin:'4px 0', fontSize:'13px'}}>{l}</p>)}\n      </div>\n    </div>\n  );\n}\n\nrender(<InfiniteLoopDefense />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 65,
+        title: 'Data Fetching with useEffect',
+        shortDescription: 'Safely fetch data from an API when your component mounts.',
+        fullExplanation: 'Fetching data is a classic `useEffect` use case. Since `useEffect` callbacks cannot be `async` directly (they must return a cleanup function, not a Promise), you should define an async function INSIDE the effect and then call it immediately. Always handle loading and error states to ensure a good user experience.',
+        exampleCode: `function DataFetcher() {\n  const [data, setData] = React.useState(null);\n  const [loading, setLoading] = React.useState(false);\n  const [error, setError] = React.useState(null);\n\n  const fetchData = () => {\n    setLoading(true);\n    setError(null);\n    setData(null);\n    \n    // Simulate API call\n    setTimeout(() => {\n      if (Math.random() > 0.3) {\n        setData({ user: 'ReactMaster', xp: 5000, level: 42 });\n      } else {\n        setError('Network error: Failed to fetch user profile.');\n      }\n      setLoading(false);\n    }, 1500);\n  };\n\n  // Fetch on mount\n  React.useEffect(() => {\n    fetchData();\n  }, []);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🌐 Data Fetching</h3>\n      <div style={{minHeight:'100px',padding:'16px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #333',marginBottom:'12px',display:'flex',flexDirection:'column',justifyContent:'center'}}>\n        {loading && <p style={{color:'#f59e0b',textAlign:'center',margin:0}}>⏳ Fetching data...</p>}\n        {error && <p style={{color:'#ef4444',textAlign:'center',margin:0}}>❌ {error}</p>}\n        {data && (\n          <div style={{color:'#10b981'}}>\n            <p style={{margin:'0 0 4px',fontSize:'18px'}}>✅ Success!</p>\n            <p style={{color:'#ccc',margin:0}}>User: <strong>{data.user}</strong> (Lv.{data.level})</p>\n          </div>\n        )}\n      </div>\n      <button onClick={fetchData} disabled={loading} style={{width:'100%',padding:'8px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'6px',cursor:loading?'not-allowed':'pointer'}}>\n        {loading ? 'Fetching...' : 'Retry Request'}\n      </button>\n    </div>\n  );\n}\n\nrender(<DataFetcher />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 66,
+        title: 'AbortController in Effects',
+        shortDescription: 'Cancel outgoing network requests if a component unmounts early.',
+        fullExplanation: 'Race conditions occur if you fetch data, but the user navigates away before the fetch completes, resulting in a state update on an unmounted component. The modern native browser solution is `AbortController`. You pass its `signal` to `fetch()`, and call `abort()` inside your `useEffect` cleanup function to cancel the request.',
+        exampleCode: `function AbortDemo() {\n  const [data, setData] = React.useState(null);\n  const [loading, setLoading] = React.useState(true);\n\n  React.useEffect(() => {\n    const controller = new AbortController();\n    const signal = controller.signal;\n\n    setLoading(true);\n    // Mock API call that takes 2 seconds\n    const timer = setTimeout(() => {\n      if (!signal.aborted) {\n        setData('🎉 Data successfully loaded!');\n        setLoading(false);\n      }\n    }, 2000);\n\n    // Cleanup: cancel the timer/request if unmounted\n    return () => {\n      console.log('Component unmounted, aborting request!');\n      controller.abort();\n      clearTimeout(timer);\n    };\n  }, []);\n\n  return (\n    <div style={{padding:'16px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #333'}}>\n      {loading ? <span style={{color:'#f59e0b'}}>⏳ Loading... (takes 2s)</span> : <span style={{color:'#10b981'}}>{data}</span>}\n    </div>\n  );\n}\n\nfunction App() {\n  const [mounted, setMounted] = React.useState(true);\n  \n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛑 AbortController</h3>\n      <p style={{color:'#888',fontSize:'13px'}}>Unmount before 2 seconds to see the abort in the console!</p>\n      {mounted ? <AbortDemo /> : <p style={{color:'#ef4444'}}>Component destroyed. Request aborted.</p>}\n      <button onClick={() => setMounted(!mounted)} style={{marginTop:'12px',padding:'6px 12px',borderRadius:'4px',background:'#333',color:'#fff',border:'none',cursor:'pointer'}}>\n        {mounted ? 'Unmount Fast!' : 'Remount'}\n      </button>\n    </div>\n  );\n}\n\nrender(<App />);`,
+        xpReward: 20,
+        levelRequired: 3,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 67,
+        title: 'useLayoutEffect',
+        shortDescription: 'Perform synchronous DOM measurements before the browser repaints.',
+        fullExplanation: '`useLayoutEffect` works identically to `useEffect`, except it fires synchronously *after* React has applied DOM changes, but *before* the browser repaints the screen. Use this ONLY when you need to read layout from the DOM (like measuring a tooltip\'s size) and immediately re-render to adjust positioning to prevent visual flickering. For everything else, use `useEffect`.',
+        exampleCode: `function LayoutEffectDemo() {\n  const [width, setWidth] = React.useState(0);\n  const boxRef = React.useRef(null);\n\n  // useLayoutEffect runs before the screen updates.\n  // If we used useEffect here, you might see a flicker.\n  React.useLayoutEffect(() => {\n    if (boxRef.current) {\n      // Measure the DOM node\n      const rect = boxRef.current.getBoundingClientRect();\n      setWidth(Math.round(rect.width));\n    }\n  }, []);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📏 useLayoutEffect</h3>\n      <div \n        ref={boxRef}\n        style={{width:'60%',height:'50px',background:'linear-gradient(90deg, #7c3aed, #06b6d4)',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:'bold',transition:'width 0.5s'}}\n      >\n        My width is {width}px\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'8px'}}>Resize window to test (in a real app), here we just measure once before paint.</p>\n    </div>\n  );\n}\n\nrender(<LayoutEffectDemo />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 68,
+        title: 'useInsertionEffect',
+        shortDescription: 'Inject dynamic CSS styles before React mutates the DOM.',
+        fullExplanation: '`useInsertionEffect` is a specialized hook intended specifically for CSS-in-JS libraries. It runs synchronously *before* React makes any DOM mutations. This is the optimal place to inject `<style>` tags into the document head, ensuring the CSS is parsed by the browser alongside the DOM updates, avoiding style recalculation performance hits. You will rarely use this in application code.',
+        exampleCode: `function InsertionEffectDemo() {\n  // Typically used by libraries like Styled Components\n  React.useInsertionEffect(() => {\n    // Create a style tag\n    const style = document.createElement('style');\n    style.innerHTML = \`\n      .dynamic-shadow {\n        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);\n        transition: box-shadow 0.3s;\n      }\n      .dynamic-shadow:hover {\n        box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);\n      }\n    \`;\n    document.head.appendChild(style);\n    \n    // Cleanup\n    return () => {\n      document.head.removeChild(style);\n    };\n  }, []); // Run on mount\n\n  return (\n    <div style={{textAlign:'center',padding:'20px'}}>\n      <h3 style={{color:'#7c3aed'}}>🎨 useInsertionEffect</h3>\n      <div className="dynamic-shadow" style={{padding:'20px',background:'#1a1a2e',borderRadius:'12px',border:'1px solid #10b981',display:'inline-block'}}>\n        <span style={{color:'#10b981',fontWeight:'bold',fontSize:'18px'}}>Hover me for dynamic shadow!</span>\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'12px',maxWidth:'300px',margin:'12px auto 0'}}>\n        The CSS rules for the hover effect were dynamically injected into the &lt;head&gt; before any layout happened.\n      </p>\n    </div>\n  );\n}\n\nrender(<InsertionEffectDemo />);`,
+        xpReward: 15,
+        levelRequired: 3,
+        difficulty: 'Advanced'
     }
 ];
 
