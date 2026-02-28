@@ -682,6 +682,117 @@ const lessons = [
         xpReward: 15,
         levelRequired: 3,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 5 — Advanced Hooks =====
+    {
+        id: 69,
+        title: 'useRef',
+        shortDescription: 'Store mutable values that persist across renders without causing re-renders.',
+        fullExplanation: '`useRef` is like a "box" that holds a mutable value in its `.current` property. Unlike state (`useState`), updating a ref does NOT trigger a component re-render. This makes it perfect for storing previous state values, timer IDs, or any mutable data that the render phase doesn\'t need to see.',
+        exampleCode: `function MutableValueRef() {\n  const [count, setCount] = React.useState(0);\n  const renders = React.useRef(0);\n\n  // Mutable update: doesn't cause a re-render itself\n  renders.current++;\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>📦 useRef (Mutable Data)</h3>\n      <p style={{color:'#06b6d4',fontSize:'20px',margin:'8px 0'}}>State Count: {count}</p>\n      <button onClick={() => setCount(c => c + 1)} style={{padding:'6px 16px',background:'#10b981',color:'#fff',border:'none',borderRadius:'6px',cursor:'pointer'}}>\n        Force State Update\n      </button>\n      <p style={{color:'#f59e0b',marginTop:'12px'}}>\n        Component has rendered {renders.current} times.\n      </p>\n    </div>\n  );\n}\n\nrender(<MutableValueRef />);`,
+        xpReward: 15,
+        levelRequired: 4,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 70,
+        title: 'DOM Access with useRef',
+        shortDescription: 'Directly access and manipulate underlying DOM nodes.',
+        fullExplanation: 'While React handles DOM updates declaratively, sometimes you need imperative control to focus an input, scroll a container, or integrate with a third-party DOM library. Pass a ref object created by `useRef()` to the `ref={}` attribute of a JSX element. React will assign the DOM node to `ref.current` once it mounts.',
+        exampleCode: `function DOMAccessDemo() {\n  const inputRef = React.useRef(null);\n\n  const handleFocus = () => {\n    // Directly accessing the underlying HTMLInputElement\n    inputRef.current.focus();\n    inputRef.current.value = 'Focused via Ref!';\n    inputRef.current.style.borderColor = '#10b981';\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎯 DOM Access (useRef)</h3>\n      <div style={{display:'flex',gap:'8px',marginTop:'12px'}}>\n        <input \n          ref={inputRef} \n          placeholder="I need focus..." \n          style={{flex:1,padding:'8px',borderRadius:'6px',border:'2px solid #444',background:'#1a1a2e',color:'#fff',transition:'border 0.3s'}}\n        />\n        <button onClick={handleFocus} style={{padding:'8px 16px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'6px',cursor:'pointer'}}>\n          Focus Input\n        </button>\n      </div>\n    </div>\n  );\n}\n\nrender(<DOMAccessDemo />);`,
+        xpReward: 15,
+        levelRequired: 4,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 71,
+        title: 'useMemo',
+        shortDescription: 'Cache the result of expensive calculations between renders.',
+        fullExplanation: '`useMemo` caches (memoizes) a computed value. It only recomputes the value when one of its dependencies changes. Use it to optimize performance when you have heavy mathematical calculations or expensive array filtering operations that shouldn\'t run on every single re-render of unrelated state.',
+        exampleCode: `function MemoDemo() {\n  const [count, setCount] = React.useState(0);\n  const [items] = React.useState(Array.from({ length: 50 }, (_, i) => i + 1));\n\n  // Expensive computation: only runs if 'items' changes (it doesn't here)\n  const totalSum = React.useMemo(() => {\n    console.log('Calculating expensive sum...');\n    return items.reduce((acc, curr) => acc + curr, 0);\n  }, [items]);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🧠 useMemo</h3>\n      <p style={{color:'#10b981',fontSize:'16px'}}>Sum of 1 to 50: <strong>{totalSum}</strong></p>\n      <hr style={{borderColor:'#333',margin:'12px 0'}} />\n      <p style={{color:'#888',fontSize:'13px'}}>Updating count does NOT trigger recalculation:</p>\n      <button onClick={() => setCount(c => c + 1)} style={{padding:'6px 12px',background:'#f59e0b',color:'#000',border:'none',borderRadius:'4px'}}>\n        Count: {count}\n      </button>\n      <p style={{color:'#06b6d4',fontSize:'12px',marginTop:'8px'}}>Open console: you'll only see 'Calculating' once!</p>\n    </div>\n  );\n}\n\nrender(<MemoDemo />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 72,
+        title: 'useCallback',
+        shortDescription: 'Cache a function definition to prevent unnecessary child re-renders.',
+        fullExplanation: 'Every time a component re-renders, it creates new function references for all inline functions. If you pass these functions down as props to optimized child components, it breaks their optimization because the prop reference changed! `useCallback` caches the function reference itself, keeping it stable as long as dependencies don\'t change.',
+        exampleCode: `function CallbackDemo() {\n  const [count, setCount] = React.useState(0);\n  const [text, setText] = React.useState('');\n\n  // Stables reference unless 'count' changes\n  const handleAction = React.useCallback(() => {\n    console.log(\`Action triggered at count \${count}\`);\n  }, [count]);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🪝 useCallback</h3>\n      <div style={{display:'flex',gap:'12px',marginBottom:'12px'}}>\n        <button onClick={() => setCount(c => c + 1)} style={{padding:'6px 12px',background:'#10b981',border:'none',borderRadius:'4px',color:'#fff'}}>\n          Update Dependency ({count})\n        </button>\n        <input \n          value={text} onChange={e => setText(e.target.value)} \n          placeholder="Type (doesn't change fn ref)" \n          style={{padding:'6px',borderRadius:'4px',border:'1px solid #444',background:'#1a1a2e',color:'#fff'}}\n        />\n      </div>\n      <button onClick={handleAction} style={{padding:'8px 16px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}>\n        Call Memoized Function\n      </button>\n    </div>\n  );\n}\n\nrender(<CallbackDemo />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 73,
+        title: 'React.memo',
+        shortDescription: 'Skip re-rendering components if their props haven\'t changed.',
+        fullExplanation: 'By default, when a parent renders, all its children render. `React.memo` is a Higher Order Component (HOC) that wraps a component and tells React: "Only re-render this child if its props actually change." It is often paired with `useCallback` and `useMemo` so that the object/function props passed to it remain stable references.',
+        exampleCode: `// Wrapped in React.memo\nconst HeavyButton = React.memo(({ onClick, label }) => {\n  console.log(\`Rendering HeavyButton: \${label}\`);\n  // Simulate expensive render\n  let i = 0; while (i < 10000000) i++; \n  return <button onClick={onClick} style={{marginRight:'8px',padding:'6px 12px',background:'#7c3aed',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}>{label}</button>;\n});\n\nfunction MemoComponentDemo() {\n  const [clicks, setClicks] = React.useState(0);\n  const [text, setText] = React.useState('');\n\n  // Must be useCallback for React.memo to work on the child!\n  const handleClick = React.useCallback(() => setClicks(c => c + 1), []);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛡️ React.memo</h3>\n      <p style={{color:'#888',fontSize:'13px'}}>Typing in the input won't cause the heavy button to re-render.</p>\n      <input \n        value={text} onChange={e => setText(e.target.value)}\n        placeholder="Type here..." \n        style={{marginBottom:'12px',padding:'6px',borderRadius:'4px',border:'1px solid #444',background:'#1a1a2e',color:'#fff',display:'block'}}\n      />\n      <HeavyButton label={\`Clicked \${clicks}x\`} onClick={handleClick} />\n      <p style={{color:'#06b6d4',fontSize:'12px',marginTop:'8px'}}>Console logs show the button only renders when clicks change!</p>\n    </div>\n  );\n}\n\nrender(<MemoComponentDemo />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 74,
+        title: 'useContext',
+        shortDescription: 'Read and subscribe to context from your component without prop drilling.',
+        fullExplanation: 'Context provides a way to pass data through the component tree without having to pass props down manually at every level ("prop drilling"). `React.createContext()` creates the context, `<Context.Provider value={...}>` wraps your app to provide the value, and the `useContext(Context)` hook reads the value in any child.',
+        exampleCode: `// 1. Create Context\nconst ThemeContext = React.createContext('dark');\n\nfunction Child() {\n  // 3. Consume Context\n  const theme = React.useContext(ThemeContext);\n  const style = theme === 'dark' \n    ? { background: '#1a1a2e', color: '#fff' } \n    : { background: '#f8fafc', color: '#0f172a' };\n\n  return (\n    <div style={{...style, padding:'16px', borderRadius:'8px', transition:'all 0.3s'}}>\n      The current theme is: <strong>{theme}</strong>\n    </div>\n  );\n}\n\nfunction ContextDemo() {\n  const [theme, setTheme] = React.useState('dark');\n\n  return (\n    // 2. Provide Context\n    <ThemeContext.Provider value={theme}>\n      <h3 style={{color:'#7c3aed'}}>🌍 useContext</h3>\n      <button \n        onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} \n        style={{marginBottom:'12px',padding:'6px 12px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}\n      >\n        Toggle Theme\n      </button>\n      <Child />\n    </ThemeContext.Provider>\n  );\n}\n\nrender(<ContextDemo />);`,
+        xpReward: 15,
+        levelRequired: 4,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 75,
+        title: 'Context API Deep Dive',
+        shortDescription: 'Pass objects and setter functions through Context for global state.',
+        fullExplanation: 'You aren\'t limited to simple strings in Context. You can pass objects containing both the state AND the state setter function `[value, setValue]`. This effectively creates a lightweight global state management system (similar to Redux or Zustand) native to React. Be careful: any change to the context value object triggers a re-render of ALL consuming components.',
+        exampleCode: `const UserContext = React.createContext();\n\nfunction Nav() {\n  // Read both state and setter from context\n  const { user, setUser } = React.useState(null);\n  return <p style={{color:'#aaa'}}>Logged in as: <strong>{user || 'Guest'}</strong></p>;\n}\n\nfunction UserProfile() {\n  const { user, setUser } = React.useContext(UserContext);\n  return (\n    <div style={{background:'#1a1a2e',padding:'12px',borderRadius:'8px'}}>\n      {user ? (\n        <button onClick={() => setUser(null)} style={{background:'#ef4444',color:'#fff',border:'none',padding:'4px 8px',borderRadius:'4px'}}>Log Out</button>\n      ) : (\n        <button onClick={() => setUser('ReactMaster')} style={{background:'#10b981',color:'#fff',border:'none',padding:'4px 8px',borderRadius:'4px'}}>Log In</button>\n      )}\n    </div>\n  );\n}\n\nfunction GlobalStateApp() {\n  const [user, setUser] = React.useState(null);\n\n  return (\n    // Passing an object with state and setter\n    <UserContext.Provider value={{ user, setUser }}>\n      <h3 style={{color:'#7c3aed'}}>⚙️ Global Context State</h3>\n      <div style={{border:'1px solid #333',padding:'12px',borderRadius:'8px'}}>\n         <div style={{display:'flex',justifyContent:'space-between',borderBottom:'1px solid #333',paddingBottom:'8px',marginBottom:'8px'}}>\n           <span style={{fontWeight:'bold',color:'#06b6d4'}}>My App</span>\n           {/* We read context here */}\n           <span style={{color:'#888'}}>{user || 'Guest'}</span>\n         </div>\n         {/* We update context here */}\n         <UserProfile />\n      </div>\n    </UserContext.Provider>\n  );\n}\n\nrender(<GlobalStateApp />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 76,
+        title: 'useReducer',
+        shortDescription: 'Manage complex state logic using a reducer function and actions.',
+        fullExplanation: '`useReducer` is an alternative to `useState` ideal for complex state logic involving multiple sub-values or when the next state depends mathematically on the previous one. It takes a "reducer" function `(state, action) => newState` and an initial state. You update it by dispatching "action" objects `{ type: "INCREMENT" }`. It\'s the exact pattern used in Redux.',
+        exampleCode: `// 1. Define the reducer function (pure function)\nfunction reducer(state, action) {\n  switch (action.type) {\n    case 'INCREMENT': return { count: state.count + 1 };\n    case 'DECREMENT': return { count: state.count - 1 };\n    case 'SET': return { count: action.payload };\n    default: return state;\n  }\n}\n\nfunction ReducerDemo() {\n  // 2. Initialize useReducer\n  const [state, dispatch] = React.useReducer(reducer, { count: 0 });\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>🏗️ useReducer</h3>\n      <p style={{color:'#06b6d4',fontSize:'24px',fontWeight:'bold'}}>{state.count}</p>\n      <div style={{display:'flex',gap:'8px',justifyContent:'center',marginTop:'12px'}}>\n        {/* 3. Dispatch actions */}\n        <button onClick={() => dispatch({ type: 'DECREMENT' })} style={{padding:'6px 12px',background:'#ef4444',color:'#fff',border:'none',borderRadius:'4px'}}>-</button>\n        <button onClick={() => dispatch({ type: 'SET', payload: 100 })} style={{padding:'6px 12px',background:'#333',color:'#fff',border:'none',borderRadius:'4px'}}>Set 100</button>\n        <button onClick={() => dispatch({ type: 'INCREMENT' })} style={{padding:'6px 12px',background:'#10b981',color:'#fff',border:'none',borderRadius:'4px'}}>+</button>\n      </div>\n    </div>\n  );\n}\n\nrender(<ReducerDemo />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 77,
+        title: 'Combining useReducer + Context',
+        shortDescription: 'Build a powerful, scalable global state management architecture.',
+        fullExplanation: 'By combining `useReducer` and `useContext`, you can create a highly scalable global state architecture without external libraries. The Provider holds the `useReducer` hook. You then provide two contexts: one for the `state` (so components can read it) and one for the `dispatch` function (so components can trigger changes without re-rendering if they don\'t read state).',
+        exampleCode: `// Setup Reducer & Contexts\nconst countReducer = (s, a) => a === 'INC' ? s + 1 : a === 'DEC' ? s - 1 : s;\nconst StateContext = React.createContext();\nconst DispatchContext = React.createContext();\n\nfunction Display() {\n  const count = React.useContext(StateContext);\n  return <p style={{color:'#10b981',fontSize:'20px'}}>Count: {count}</p>;\n}\n\nfunction Controls() {\n  const dispatch = React.useContext(DispatchContext);\n  return (\n    <button \n      onClick={() => dispatch('INC')} \n      style={{padding:'6px 12px',background:'#7c3aed',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}\n    >\n      Global +1\n    </button>\n  );\n}\n\nfunction App() {\n  const [state, dispatch] = React.useReducer(countReducer, 0);\n\n  return (\n    <StateContext.Provider value={state}>\n      <DispatchContext.Provider value={dispatch}>\n        <div style={{border:'1px solid #333',padding:'16px',borderRadius:'8px'}}>\n          <h3 style={{color:'#7c3aed',marginTop:0}}>🌐 Reducer + Context</h3>\n          <p style={{color:'#888',fontSize:'13px'}}>State & Dispatch provided separately.</p>\n          <Display />\n          <Controls />\n        </div>\n      </DispatchContext.Provider>\n    </StateContext.Provider>\n  );\n}\n\nrender(<App />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 78,
+        title: 'Custom Hooks',
+        shortDescription: 'Extract component logic into reusable functions.',
+        fullExplanation: 'A custom hook is just a JavaScript function whose name starts with "use" (e.g., `useWindowSize`, `useFetch`). Inside it, you can call other hooks (`useState`, `useEffect`). This allows you to extract complex, stateful logic out of your UI components and reuse it effortlessly across your application. They keep your components clean and declarative.',
+        exampleCode: `// 🛠️ Custom Hook\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = React.useState(initialValue);\n  const toggle = React.useCallback(() => setValue(v => !v), []);\n  // Returns an array, just like useState!\n  return [value, toggle];\n}\n\nfunction Application() {\n  // Using the custom hook multiple times!\n  const [isModalOpen, toggleModal] = useToggle(false);\n  const [isDarkMode, toggleTheme] = useToggle(true);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🪝 Custom Hooks</h3>\n      <div style={{display:'flex',gap:'12px',marginBottom:'12px'}}>\n        <button onClick={toggleModal} style={{padding:'6px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'4px'}}>\n          {isModalOpen ? 'Close' : 'Open'} Modal\n        </button>\n        <button onClick={toggleTheme} style={{padding:'6px',background:isDarkMode?'#1a1a2e':'#fff',color:isDarkMode?'#fff':'#000',border:'1px solid #444',borderRadius:'4px'}}>\n          {isDarkMode ? '🌙 Dark' : '☀️ Light'}\n        </button>\n      </div>\n      \n      {isModalOpen && (\n        <div style={{padding:'12px',background:'#10b981',color:'#000',borderRadius:'8px',fontWeight:'bold'}}>\n          Modal is visible!\n        </div>\n      )}\n    </div>\n  );\n}\n\nrender(<Application />);`,
+        xpReward: 20,
+        levelRequired: 4,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 79,
+        title: 'Rules of Hooks',
+        shortDescription: 'Understand the two strict rules for using React Hooks safely.',
+        fullExplanation: 'React Hooks have two unbreakable rules: \\n1) **Only call Hooks at the top level.** Don\'t call hooks inside loops, conditions (`if`), or nested functions. React relies on the calling order of hooks to link state to the correct `useState` call.\\n2) **Only call Hooks from React functions.** Call them from functional components or from your own Custom Hooks, never from regular JavaScript functions.',
+        exampleCode: `function RulesOfHooksDemo({ showExtra }) {\n  const [a, setA] = React.useState(1);\n\n  // ❌ ILLEGAL: Conditional Hook!\n  // if (showExtra) {\n  //   const [extra, setExtra] = React.useState('bad');\n  // }\n\n  // ✅ LEGAL: Hook at the top level, condition inside effect\n  React.useEffect(() => {\n    if (showExtra) {\n      console.log('Extra is shown!');\n    }\n  }, [showExtra]);\n\n  return (\n    <div>\n      <h3 style={{color:'#ef4444'}}>📜 Rules of Hooks</h3>\n      <ul style={{color:'#06b6d4',paddingLeft:'20px',lineHeight:'1.6'}}>\n        <li>1️⃣ <strong>Top Level Only</strong>: Never in loops, conditions, or nested functions.</li>\n        <li>2️⃣ <strong>React Functions Only</strong>: Components & Custom Hooks.</li>\n      </ul>\n      <p style={{color:'#888',fontSize:'13px'}}>Violating these rules breaks React's internal array of state cells and causes crashes!</p>\n    </div>\n  );\n}\n\nrender(<RulesOfHooksDemo showExtra={true} />);`,
+        xpReward: 10,
+        levelRequired: 4,
+        difficulty: 'Advanced'
     }
 ];
 
