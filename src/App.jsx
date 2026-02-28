@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import Feed from './components/Feed';
 import Achievements from './components/Achievements';
@@ -27,9 +27,9 @@ function App() {
   const [confettiTrigger, setConfettiTrigger] = useState(0);
 
   // Check daily login on mount
-  useState(() => {
+  useEffect(() => {
     checkDailyLogin();
-  });
+  }, []);
 
   const level = getLevel();
   const xpForNext = getXpForNextLevel();
