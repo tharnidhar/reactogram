@@ -1217,6 +1217,107 @@ const lessons = [
         xpReward: 15,
         levelRequired: 8,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 10 — Architectural Patterns =====
+    {
+        id: 122,
+        title: 'Presentational vs Container Components',
+        shortDescription: 'The classic separation of UI from logic.',
+        fullExplanation: 'Also known as "Dumb" vs "Smart" components. A Container component’s job is purely to fetch data, listen to Redux, and manage state. It then renders a Presentational component, passing data down via props. The Presentational component has no state, no API calls, just UI rendering. This separation makes UI extremely reusable and easier to test.',
+        exampleCode: `function ContainerConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📦 Container vs Presentational</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #3b82f6',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// 1. CONTAINER (Smart - Manages Logic)</span><br/>\n        function UserListContainer() {'{'}<br/>\n        &nbsp;&nbsp;const [users, setUsers] = React.useState([]);<br/>\n        &nbsp;&nbsp;React.useEffect(() =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;fetch('/api/users').then(r=&gt;r.json()).then(setUsers);<br/>\n        &nbsp;&nbsp;{'}'}, []);<br/>\n        &nbsp;&nbsp;return &lt;<span style={{color:'#10b981'}}>UserListUI</span> users=&#123;users&#125; /&gt;;<br/>\n        {'}'}<br/><br/>\n        <span style={{color:'#888'}}>// 2. PRESENTATIONAL (Dumb - Just UI)</span><br/>\n        function <span style={{color:'#10b981'}}>UserListUI</span>({'{'} users {'}'}) {'{'}<br/>\n        &nbsp;&nbsp;return &lt;ul&gt;&#123;users.map(u =&gt; &lt;li&gt;&#123;u.name&#125;&lt;/li&gt;)&#125;&lt;/ul&gt;;<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'12px'}}>\n        While Hooks replaced many use-cases for this pattern, it is still highly relevant for complex components.\n      </p>\n    </div>\n  );\n}\n\nrender(<ContainerConcept />);`,
+        xpReward: 15,
+        levelRequired: 9,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 123,
+        title: 'Feature-based Folder Structure',
+        shortDescription: 'Organizing code by feature domain instead of file type.',
+        fullExplanation: 'Beginner apps organize by file type (`/components`, `/hooks`, `/api`). As an app scales, this becomes unmanageable. If you delete the "Cart" feature, you have to delete files across 5 different folders. Feature-based structure (`/features/cart/`, `/features/auth/`) groups everything related to a domain (components, hooks, tests, api) into one autonomous folder.',
+        exampleCode: `function FolderStructureConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📁 Feature-Based Structure</h3>\n      <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>\n        <div style={{flex:1,padding:'12px',background:'#2e1a1a',border:'1px solid #ef4444',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#ef4444'}}>❌ Bad (By Type)</h4>\n          <pre style={{margin:0,color:'#ccc',fontSize:'12px',lineHeight:'1.5'}}>\nsrc/\n├─ components/\n│  ├─ CartLogo.jsx\n│  ├─ AuthForm.jsx\n├─ hooks/\n│  ├─ useCart.js\n│  ├─ useAuth.js\n├─ api/\n│  ├─ cartApi.js\n│  ├─ authApi.js\n          </pre>\n        </div>\n        <div style={{flex:1,padding:'12px',background:'#1a2e1a',border:'1px solid #10b981',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#10b981'}}>✅ Good (By Feature)</h4>\n          <pre style={{margin:0,color:'#ccc',fontSize:'12px',lineHeight:'1.5'}}>\nsrc/\n├─ features/\n│  ├─ cart/\n│  │  ├─ CartLogo.jsx\n│  │  ├─ useCart.js\n│  │  ├─ api.js\n│  ├─ auth/\n│  │  ├─ AuthForm.jsx\n│  │  ├─ useAuth.js\n│  │  ├─ api.js\n          </pre>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<FolderStructureConcept />);`,
+        xpReward: 15,
+        levelRequired: 9,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 124,
+        title: 'Atomic Design',
+        shortDescription: 'Building UIs seamlessly from the smallest particles up.',
+        fullExplanation: 'Atomic Design is a mental model for design systems. **Atoms** are fundamental elements that cannot be broken down further (Button, Input). **Molecules** are simple combinations of atoms (Search Form = Input + Button). **Organisms** are complex sections composed of molecules (Site Header). **Templates** dictate layout, and **Pages** are specific instances of templates.',
+        exampleCode: `function AtomicConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚛️ Atomic Design</h3>\n      <ul style={{color:'#ccc',lineHeight:'1.6'}}>\n        <li>\n           <span style={{fontSize:'20px'}}>🟡</span> <strong style={{color:'#3b82f6'}}>Atoms:</strong> Basic building blocks. <code>&lt;Button /&gt;</code>, <code>&lt;Input /&gt;</code>, <code>&lt;Label /&gt;</code>.\n        </li>\n        <li>\n           <span style={{fontSize:'20px'}}>🧬</span> <strong style={{color:'#10b981'}}>Molecules:</strong> Combinations of atoms. <code>&lt;SearchForm /&gt;</code> (Input + Button).\n        </li>\n        <li>\n           <span style={{fontSize:'20px'}}>🦖</span> <strong style={{color:'#f59e0b'}}>Organisms:</strong> Distinct UI sections. <code>&lt;NavigationBar /&gt;</code> (Logo Atom + Nav Link Atoms + SearchForm Molecule).\n        </li>\n        <li>\n           <span style={{fontSize:'20px'}}>📄</span> <strong style={{color:'#ef4444'}}>Templates &amp; Pages:</strong> <code>&lt;DashboardLayout /&gt;</code> and <code>&lt;DashboardPage /&gt;</code>.\n        </li>\n      </ul>\n    </div>\n  );\n}\n\nrender(<AtomicConcept />);`,
+        xpReward: 10,
+        levelRequired: 9,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 125,
+        title: 'Compound Components',
+        shortDescription: 'Multiple components that work together implicitly sharing state.',
+        fullExplanation: 'Think of `<select>` and `<option>`. They are distinct HTML tags, but they inherently belong together. In React, Compound Components use Context (or `React.Children.map`) to implicitly pass state from a Parent to its specific Children without requiring the user to pass rigid configuration props. This leads to extremely flexible, highly-declarative UIs.',
+        exampleCode: `function CompoundDemo() {\n  // 1. Create a shared context\n  const ToggleContext = React.createContext();\n\n  // 2. Parent Component\n  function Toggle({ children }) {\n    const [on, setOn] = React.useState(false);\n    return (\n      <ToggleContext.Provider value={{ on, toggle: () => setOn(!on) }}>\n        <div style={{display:'inline-flex',border:'1px solid #7c3aed',borderRadius:'8px',overflow:'hidden'}}>\n           {children}\n        </div>\n      </ToggleContext.Provider>\n    );\n  }\n\n  // 3. Child Components read from Context implicitly\n  function ToggleOn({ children }) {\n    const { on } = React.useContext(ToggleContext);\n    return on ? <span style={{padding:'8px',background:'#10b981',color:'#000'}}>{children}</span> : null;\n  }\n  function ToggleOff({ children }) {\n    const { on } = React.useContext(ToggleContext);\n    return !on ? <span style={{padding:'8px',background:'#ef4444',color:'#fff'}}>{children}</span> : null;\n  }\n  function ToggleButton() {\n    const { on, toggle } = React.useContext(ToggleContext);\n    return <button onClick={toggle} style={{padding:'8px',cursor:'pointer'}}>Switch</button>;\n  }\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🧩 Compound Components</h3>\n      {/* Usage is incredibly clean and declarative! */}\n      <Toggle>\n        <ToggleOn>System is ONLINE</ToggleOn>\n        <ToggleOff>System is OFFLINE</ToggleOff>\n        <ToggleButton />\n      </Toggle>\n    </div>\n  );\n}\n\nrender(<CompoundDemo />);`,
+        xpReward: 20,
+        levelRequired: 9,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 126,
+        title: 'Render Props',
+        shortDescription: 'A technique for sharing code between components using a prop whose value is a function.',
+        fullExplanation: 'Before Custom Hooks existed, Render Props were the primary way to share complex logic (like Mouse Tracking or Window Re-sizing) between components. A component with a render prop takes a function that returns a React element and calls it instead of implementing its own render logic. You still see this heavily heavily in libraries like Formik and React Router v5.',
+        exampleCode: `function RenderPropsDemo() {\n  // Component sharing logic\n  function MouseTracker({ render }) {\n    const [pos, setPos] = React.useState({ x: 0, y: 0 });\n    \n    return (\n      <div \n        style={{height: '100px', border:'1px dashed #7c3aed', position:'relative', cursor:'crosshair'}}\n        onMouseMove={(e) => setPos({ \n          x: e.nativeEvent.offsetX,\n          y: e.nativeEvent.offsetY\n        })}\n      >\n        {/* Call the render function prop! */}\n        {render(pos)}\n      </div>\n    );\n  }\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎨 Render Props</h3>\n      <MouseTracker render={(pos) => (\n        <div style={{ \n          position: 'absolute', \n          left: pos.x, \n          top: pos.y, \n          background: '#f59e0b', \n          color: '#000', \n          padding: '2px 6px', \n          borderRadius: '4px',\n          pointerEvents: 'none',\n          transform: 'translate(-50%, -100%)'\n        }}>\n           {pos.x}, {pos.y}\n        </div>\n      )} />\n    </div>\n  );\n}\n\nrender(<RenderPropsDemo />);`,
+        xpReward: 20,
+        levelRequired: 9,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 127,
+        title: 'Higher-Order Components (HOC)',
+        shortDescription: 'A function that takes a component and returns a new component.',
+        fullExplanation: 'Another pre-Hooks pattern for logic reuse. A Higher-Order Component (HOC) wraps a component in a container component to inject additional props or functionality. E.g., `const ProtectedDashboard = withAuth(Dashboard)`. While custom hooks replaced most HOC use cases, you build HOCs when you need to intercept rendering logic entirely (like redirecting unauthenticated users before rendering).',
+        exampleCode: `function HOCConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎁 Higher-Order Components</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #f59e0b',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// HOC Factory Function</span><br/>\n        function <span style={{color:'#f59e0b'}}>withAuth</span>(WrappedComponent) {'{'}<br/>\n        &nbsp;&nbsp;return function EnhancedComponent(props) {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;const isAuthed = useCheckAuth();<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#10b981'}}>// Intercept render!</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;if (!isAuthed) return &lt;Navigate to="/login" /&gt;;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#10b981'}}>// Pass through original props</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;return &lt;WrappedComponent {'{'}...props{'}'} /&gt;;<br/>\n        &nbsp;&nbsp;{'}'}<br/>\n        {'}'}<br/><br/>\n        <span style={{color:'#888'}}>// Usage</span><br/>\n        const ProtectedSettings = <span style={{color:'#f59e0b'}}>withAuth</span>(SettingsPage);\n      </div>\n    </div>\n  );\n}\n\nrender(<HOCConcept />);`,
+        xpReward: 20,
+        levelRequired: 9,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 128,
+        title: 'Headless Components',
+        shortDescription: 'Maximum logic reuse with zero UI constraints.',
+        fullExplanation: 'A "Headless" Component contains complex logic (state management, event handling, accessibility markup) but outputs *no visual UI of its own*. It uses Custom Hooks (or Render Props) to hand you the state and the required HTML attributes (`aria-expanded`, `onClick`), allowing you to render the UI exactly as you want. Libraries like Radix UI, TanStack Table, and Downshift use this.',
+        exampleCode: `function HeadlessDemo() {\n  // 1. HEADLESS HOOK (All logic, zero UI)\n  function useToggle() {\n    const [isOpen, setIsOpen] = React.useState(false);\n    const toggle = () => setIsOpen(p => !p);\n    \n    return {\n      isOpen,\n      buttonProps: {\n        onClick: toggle,\n        'aria-expanded': isOpen\n      },\n      contentProps: {\n        hidden: !isOpen\n      }\n    };\n  }\n\n  // 2. CONSUMER (All UI, zero logic)\n  const { isOpen, buttonProps, contentProps } = useToggle();\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>👻 Headless Components</h3>\n      <p style={{color:'#ccc'}}>The hook provided the raw props, I designed the UI.</p>\n      <button {...buttonProps} style={{padding:'8px',background:isOpen?'#ef4444':'#10b981',color:'#fff',border:'none'}}>\n        {isOpen ? 'Close' : 'Open'} Secret\n      </button>\n      <div {...contentProps} style={{marginTop:'12px',padding:'12px',background:'#1a1a2e',color:'#f59e0b'}}>\n         🔥 This content state is managed completely headlessly.\n      </div>\n    </div>\n  );\n}\n\nrender(<HeadlessDemo />);`,
+        xpReward: 20,
+        levelRequired: 9,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 129,
+        title: 'Slot Pattern',
+        shortDescription: 'Passing React elements into designated areas of a component layout.',
+        fullExplanation: 'While `children` places content in one main area, complex components (like a Modal or Page Layout) often need multiple placeholder zones (Header, Sidebar, Footer, Body). The Slot pattern achieves this by passing React Elements as named props (e.g., `headerElement={<MyHeader />}`).',
+        exampleCode: `function SlotDemo() {\n  // Layout Component with "Slots"\n  function AppLayout({ sidebarSlot, mainSlot, footerSlot }) {\n    return (\n      <div style={{display:'grid',gridTemplateColumns:'150px 1fr',gridTemplateRows:'1fr 40px',gap:'8px',minHeight:'200px',border:'1px solid #555'}}>\n        <aside style={{background:'#1a1a2e',padding:'8px'}}>\n          {sidebarSlot} {/* Render the passed element */}\n        </aside>\n        <main style={{background:'#222',padding:'16px'}}>\n          {mainSlot}\n        </main>\n        <footer style={{gridColumn:'1 / -1',background:'#111',textAlign:'center',padding:'8px'}}>\n          {footerSlot}\n        </footer>\n      </div>\n    );\n  }\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🕳️ Slot Pattern</h3>\n      <AppLayout \n        sidebarSlot={<ul><li>Home</li><li>Profile</li></ul>}\n        mainSlot={<div><h4 style={{marginTop:0}}>Dashboard Context</h4><p>Welcome back!</p></div>}\n        footerSlot={<span style={{color:'#888',fontSize:'12px'}}>© 2026 ReactOgram</span>}\n      />\n    </div>\n  );\n}\n\nrender(<SlotDemo />);`,
+        xpReward: 15,
+        levelRequired: 9,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 130,
+        title: 'Controlled Component Pattern',
+        shortDescription: 'When a parent component controls the state of a child component.',
+        fullExplanation: 'Typically used for form inputs, but applies to custom components too. An "Uncontrolled" component manages its own internal state. A "Controlled" component receives its current value via a prop (`value`) and notifies changes via a callback prop (`onChange`). By making custom components fully Controlled, you guarantee the Parent has total authority over the UI state.',
+        exampleCode: `function ControlledConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎮 Controlled Components</h3>\n      <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>\n        <div style={{flex:1,padding:'12px',background:'#2e1a1a',border:'1px solid #ef4444',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#ef4444'}}>Uncontrolled</h4>\n          <p style={{color:'#888',fontSize:'12px',margin:0}}>Manages its own state natively. You don't know its value until you read the DOM ref.</p>\n          <div style={{marginTop:'12px',padding:'8px',background:'#000',fontFamily:'monospace',fontSize:'12px',color:'#ccc'}}>\n            &lt;input type="text" /&gt;\n          </div>\n        </div>\n        \n        <div style={{flex:1,padding:'12px',background:'#1a2e1a',border:'1px solid #10b981',borderRadius:'8px'}}>\n          <h4 style={{margin:'0 0 8px',color:'#10b981'}}>Controlled</h4>\n          <p style={{color:'#888',fontSize:'12px',margin:0}}>React state drives the value. State is the single source of truth.</p>\n          <div style={{marginTop:'12px',padding:'8px',background:'#000',fontFamily:'monospace',fontSize:'12px',color:'#ccc'}}>\n            &lt;input <br/>\n            &nbsp;&nbsp;value=&#123;text&#125; <br/>\n            &nbsp;&nbsp;onChange=&#123;handleChange&#125; <br/>\n            /&gt;\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<ControlledConcept />);`,
+        xpReward: 15,
+        levelRequired: 9,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 131,
+        title: 'State Machines (XState)',
+        shortDescription: 'Mathematical models for managing complex UI logic.',
+        fullExplanation: 'Using `useState` with multiple booleans (`isLoading`, `isError`, `isSuccess`) leads to impossible states (e.g., both `isLoading` and `isError` being true simultaneously). A Finite State Machine defines explicit States ("idle", "loading", "success", "failure") and explicit Transitions between them. XState is a library that brings robust State Machines into React.',
+        exampleCode: `function StateMachineConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🤖 State Machines</h3>\n       <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #f59e0b',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n         const fetchMachine = createMachine({'{'}<br/>\n         &nbsp;&nbsp;id: 'fetch',<br/>\n         &nbsp;&nbsp;initial: '<span style={{color:'#06b6d4'}}>idle</span>',<br/>\n         &nbsp;&nbsp;states: {'{'}<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#06b6d4'}}>idle</span>: {'{'} on: {'{'} FETCH: '<span style={{color:'#f59e0b'}}>loading</span>' {'}'}{'}'},<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#f59e0b'}}>loading</span>: {'{'} on: {'{'} <br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUCCESS: '<span style={{color:'#10b981'}}>success</span>',<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERROR: '<span style={{color:'#ef4444'}}>failure</span>'<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'}'}<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;{'}'},<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#10b981'}}>success</span>: {'{'} type: 'final' {'}'},<br/>\n         &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#ef4444'}}>failure</span>: {'{'} on: {'{'} RETRY: '<span style={{color:'#f59e0b'}}>loading</span>' {'}'}{'}'}<br/>\n         &nbsp;&nbsp;{'}'}<br/>\n         {'}'});<br/>\n       </div>\n       <p style={{color:'#888',fontSize:'12px',marginTop:'12px'}}>\n        It is mathematically impossible to be in "success" and "failure" at the same time.\n      </p>\n    </div>\n  );\n}\n\nrender(<StateMachineConcept />);`,
+        xpReward: 25,
+        levelRequired: 9,
+        difficulty: 'Advanced'
     }
 ];
 
