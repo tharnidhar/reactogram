@@ -460,6 +460,137 @@ const lessons = [
         xpReward: 15,
         levelRequired: 1,
         difficulty: 'Beginner'
+    },
+    // ===== LEVEL 3 — State & Events =====
+    {
+        id: 47,
+        title: 'useState Deep Dive',
+        shortDescription: 'Master the useState hook, lazy initialization, and async updates.',
+        fullExplanation: 'useState provides state to functional components. State updates are asynchronous — React batches them for performance. If your new state depends on the previous state, ALWAYS pass a callback function to the setter: `setCount(prev => prev + 1)` instead of `setCount(count + 1)`. For expensive initial states, pass a function `useState(() => expensiveComputation())` (lazy initialization).',
+        exampleCode: `function CounterPro() {\n  // Lazy initialization: only runs on first render\n  const [count, setCount] = React.useState(() => {\n    console.log('Initializing state');\n    return 0;\n  });\n\n  const badUpdate = () => {\n    // These won't stack correctly because count is stale!\n    setCount(count + 1);\n    setCount(count + 1);\n  };\n\n  const goodUpdate = () => {\n    // These stack correctly!\n    setCount(prev => prev + 1);\n    setCount(prev => prev + 1);\n  };\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>🧮 useState Deep Dive</h3>\n      <p style={{color:'#06b6d4',fontSize:'24px',margin:'8px 0'}}>{count}</p>\n      <div style={{display:'flex',gap:'8px',justifyContent:'center'}}>\n        <button onClick={badUpdate} style={{padding:'6px 12px',borderRadius:'6px',background:'#ef4444',color:'#fff',border:'none',cursor:'pointer'}}>Bad +2 (Actually +1)</button>\n        <button onClick={goodUpdate} style={{padding:'6px 12px',borderRadius:'6px',background:'#10b981',color:'#fff',border:'none',cursor:'pointer'}}>Good +2</button>\n      </div>\n    </div>\n  );\n}\n\nrender(<CounterPro />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 48,
+        title: 'Updating Primitive State',
+        shortDescription: 'Handle numbers, strings, and booleans in React state.',
+        fullExplanation: 'Primitive types (strings, numbers, booleans) are immutable in JavaScript. To update a primitive state, you just pass the new value to the state setter. React sees the new value is different from the old one and triggers a re-render. Toggle booleans using the previous state: `setIsOpen(prev => !prev)`.',
+        exampleCode: `function PrimitiveState() {\n  const [name, setName] = React.useState('React');\n  const [score, setScore] = React.useState(100);\n  const [isActive, setIsActive] = React.useState(true);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>💎 Primitive State</h3>\n      <div style={{marginBottom:'12px'}}>\n        <input value={name} onChange={e => setName(e.target.value)} style={{padding:'6px',borderRadius:'6px',border:'1px solid #444',background:'#1a1a2e',color:'#fff',width:'100%'}} />\n        <p style={{color:'#06b6d4',margin:'4px 0'}}>String: {name}</p>\n      </div>\n      \n      <div style={{display:'flex',justifyContent:'space-between',marginBottom:'12px'}}>\n        <span style={{color:'#f59e0b'}}>Number: {score}</span>\n        <button onClick={() => setScore(s => s + 10)} style={{padding:'4px 10px',borderRadius:'4px',background:'#333',color:'#fff',border:'none',cursor:'pointer'}}>+10</button>\n      </div>\n\n      <div style={{display:'flex',justifyContent:'space-between'}}>\n        <span style={{color: isActive ? '#10b981' : '#ef4444'}}>Boolean: {isActive ? 'Active' : 'Inactive'}</span>\n        <button onClick={() => setIsActive(a => !a)} style={{padding:'4px 10px',borderRadius:'4px',background:'#333',color:'#fff',border:'none',cursor:'pointer'}}>Toggle</button>\n      </div>\n    </div>\n  );\n}\n\nrender(<PrimitiveState />);`,
+        xpReward: 10,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 49,
+        title: 'Updating Objects in State',
+        shortDescription: 'Correctly update objects in state using the spread operator.',
+        fullExplanation: 'You must treat React state as strictly read-only. NEVER mutate an object directly (`state.x = 10`). React relies on object references changing to know when to re-render. To update an object in state, always create a NEW object using the spread operator `...` and override the specific properties you want to change.',
+        exampleCode: `function ObjectState() {\n  const [user, setUser] = React.useState({\n    name: 'Alice',\n    role: 'Developer',\n    level: 1\n  });\n\n  const levelUp = () => {\n    // ❌ Error: user.level++\n    // ✅ Correct: create a new object\n    setUser(prevUser => ({\n      ...prevUser, // copy all existing fields\n      level: prevUser.level + 1 // override level\n    }));\n  };\n\n  const changeRole = (e) => {\n    setUser(prev => ({ ...prev, role: e.target.value }));\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📦 Object State</h3>\n      <div style={{padding:'12px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #333'}}>\n        <p style={{color:'#06b6d4',margin:'0 0 8px',fontSize:'18px'}}>\n          🧑‍💻 {user.name} — Lv.{user.level}\n        </p>\n        <p style={{color:'#888',margin:'0 0 12px'}}>{user.role}</p>\n        \n        <div style={{display:'flex',gap:'8px'}}>\n          <button onClick={levelUp} style={{flex:1,padding:'8px',borderRadius:'6px',background:'#10b981',color:'#fff',border:'none',cursor:'pointer'}}>Level Up</button>\n          <select value={user.role} onChange={changeRole} style={{flex:1,padding:'8px',borderRadius:'6px',background:'#333',color:'#fff',border:'none'}}>\n            <option>Developer</option>\n            <option>Designer</option>\n            <option>Manager</option>\n          </select>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<ObjectState />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 50,
+        title: 'Updating Arrays in State',
+        shortDescription: 'Modify arrays in state immutably using map, filter, and spread.',
+        fullExplanation: 'Like objects, arrays in state must not be mutated (`push`, `pop`, `splice`). To ADD, use the spread operator `[...arr, newItem]`. To REMOVE, use `arr.filter()`. To UPDATE an item, use `arr.map()`. To INSERT, slice the array before and after the insertion index. Always return a NEW array reference.',
+        exampleCode: `function ArrayState() {\n  const [tasks, setTasks] = React.useState([\n    { id: 1, text: 'Learn React', done: true },\n    { id: 2, text: 'Master State', done: false }\n  ]);\n\n  const addTask = () => {\n    const newTask = { id: Date.now(), text: 'New Task', done: false };\n    setTasks(prev => [...prev, newTask]); // Spread to add\n  };\n\n  const removeTask = (id) => {\n    setTasks(prev => prev.filter(t => t.id !== id)); // Filter to remove\n  };\n\n  const toggleTask = (id) => {\n    setTasks(prev => prev.map(t =>\n      t.id === id ? { ...t, done: !t.done } : t // Map to update\n    ));\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📚 Array State</h3>\n      <button onClick={addTask} style={{padding:'6px 12px',borderRadius:'6px',background:'#7c3aed',color:'#fff',border:'none',cursor:'pointer',marginBottom:'8px'}}>+ Add Task</button>\n      <ul style={{listStyle:'none',padding:0,margin:0}}>\n        {tasks.map(task => (\n          <li key={task.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px',background:'#1a1a2e',borderBottom:'1px solid #333'}}>\n            <span \n              onClick={() => toggleTask(task.id)}\n              style={{color: task.done ? '#888' : '#06b6d4', textDecoration: task.done ? 'line-through' : 'none', cursor:'pointer'}}\n            >\n              {task.done ? '✅' : '⬜'} {task.text}\n            </span>\n            <button onClick={() => removeTask(task.id)} style={{background:'transparent',color:'#ef4444',border:'none',cursor:'pointer'}}>✕</button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nrender(<ArrayState />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 51,
+        title: 'Event Handling',
+        shortDescription: 'Attach functions to user interactions like clicks and hover.',
+        fullExplanation: 'React events are named using camelCase, rather than lowercase string HTML (e.g. `onClick` vs `onclick`). You pass a function as the event handler, not a string. Do NOT call the function inline like `onClick={handleClick()}` — this will run immediately on render. Use `onClick={handleClick}` or wrap it in an arrow function if you need to pass arguments: `onClick={() => handleDelete(id)}`.',
+        exampleCode: `function EventHandling() {\n  const [logs, setLogs] = React.useState([]);\n\n  // Handler receiving default event object\n  const handleSimpleClick = (e) => {\n    log(\`Clicked button at X:\${e.clientX} Y:\${e.clientY}\`);\n  };\n\n  // Handler needing custom arguments\n  const handleArgClick = (message) => {\n    log(\`Message: \${message}\`);\n  };\n\n  const log = (msg) => {\n    setLogs(prev => [msg, ...prev].slice(0, 3));\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🖱️ Event Handling</h3>\n      <div style={{display:'flex',gap:'8px',marginBottom:'12px'}}>\n        {/* Passing function reference */}\n        <button onClick={handleSimpleClick} style={{flex:1,padding:'8px',borderRadius:'6px',background:'#10b981',color:'#fff',border:'none',cursor:'pointer'}}>Simple Click</button>\n        \n        {/* Inline arrow function to pass args */}\n        <button onClick={() => handleArgClick('Hello!')} style={{flex:1,padding:'8px',borderRadius:'6px',background:'#f59e0b',color:'#000',border:'none',cursor:'pointer'}}>Pass Args</button>\n      </div>\n      \n      <div style={{background:'#1a1a2e',padding:'8px',borderRadius:'8px',border:'1px solid #333',minHeight:'80px'}}>\n        <p style={{color:'#888',margin:'0 0 4px',fontSize:'12px'}}>Event Logs:</p>\n        {logs.map((l, i) => <p key={i} style={{color:'#06b6d4',margin:'2px 0',fontSize:'13px'}}>{'>'} {l}</p>)}\n      </div>\n    </div>\n  );\n}\n\nrender(<EventHandling />);`,
+        xpReward: 10,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 52,
+        title: 'Synthetic Events',
+        shortDescription: 'Understand React\'s cross-browser wrapper for native DOM events.',
+        fullExplanation: 'When you handle an event in React (e.g. `e.target`), the `e` object is a "SyntheticEvent", not a native browser event. React wraps native events to ensure they have the same properties and behavior across all browsers. The API matches the W3C spec entirely (`e.preventDefault()`, `e.stopPropagation()`). You rarely need to access the underlying native event (available via `e.nativeEvent`).',
+        exampleCode: `function SyntheticEvents() {\n  const [eventData, setEventData] = React.useState(null);\n\n  const handleMouseMove = (e) => {\n    // e is a React SyntheticEvent\n    setEventData({\n      type: e.type,\n      clientX: e.clientX,\n      clientY: e.clientY,\n      targetTag: e.target.tagName,\n      isSynthetic: !!e.nativeEvent\n    });\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🌐 Synthetic Events</h3>\n      <div \n        onMouseMove={handleMouseMove}\n        style={{height:'100px',background:'linear-gradient(45deg, #1a1a2e, #7c3aed)',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'crosshair'}}\n      >\n        <span style={{color:'#fff',fontWeight:'bold'}}>Mouse over me!</span>\n      </div>\n      \n      <div style={{marginTop:'12px',color:'#06b6d4',fontSize:'13px'}}>\n        {eventData ? (\n          <pre>{JSON.stringify(eventData, null, 2)}</pre>\n        ) : (\n          <p style={{color:'#888'}}>Awaiting event...</p>\n        )}\n      </div>\n    </div>\n  );\n}\n\nrender(<SyntheticEvents />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 53,
+        title: 'Controlled Components',
+        shortDescription: 'Keep forms in sync with state by controlling inputs directly.',
+        fullExplanation: 'In HTML, form elements like `<input>` and `<select>` maintain their own internal state. In React, we prefer "Controlled Components", where React state is the single source of truth. You bind the input\'s `value` to a state variable, and update that state inside the `onChange` event handler. This gives you instant validation, masking, and formatting abilities.',
+        exampleCode: `function ControlledInput() {\n  const [text, setText] = React.useState('');\n\n  const handleChange = (e) => {\n    // Force uppercase (formatting on the fly)\n    setText(e.target.value.toUpperCase());\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎮 Controlled Components</h3>\n      <p style={{color:'#888',fontSize:'13px'}}>React state drives the input value.</p>\n      <input \n        type="text"\n        value={text} \n        onChange={handleChange}\n        placeholder="TYPE HERE..."\n        style={{width:'100%',padding:'8px',borderRadius:'6px',background:'#1a1a2e',color:'#fff',border:'1px solid #444'}}\n      />\n      <p style={{color:'#10b981',marginTop:'8px',wordBreak:'break-all'}}>\n        State: <strong>{text || '(empty)'}</strong>\n      </p>\n      <button \n        onClick={() => setText('RESET')} \n        style={{padding:'4px 10px',borderRadius:'4px',background:'#ef4444',color:'#fff',border:'none',cursor:'pointer'}}\n      >Force State Change</button>\n    </div>\n  );\n}\n\nrender(<ControlledInput />);`,
+        xpReward: 10,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 54,
+        title: 'Forms in React',
+        shortDescription: 'Submit forms correctly by preventing default page reloads.',
+        fullExplanation: 'Handling form submissions in React involves attaching an `onSubmit` handler to the `<form>` element (not an `onClick` to the submit button). The very first line of your handler must be `e.preventDefault()`, otherwise the browser will attempt a full page reload and you will lose all your React state.',
+        exampleCode: `function ReactForm() {\n  const [email, setEmail] = React.useState('');\n  const [status, setStatus] = React.useState('idle');\n\n  const handleSubmit = (e) => {\n    e.preventDefault(); // CRITICAL: Stop page reload\n    \n    if (!email.includes('@')) {\n      setStatus('Invalid email!');\n      return;\n    }\n    \n    setStatus(\`Submitting \${email}...\`);\n    setTimeout(() => {\n      setStatus('✅ Subscribed successfully!');\n      setEmail('');\n    }, 1000);\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📝 Forms in React</h3>\n      <form onSubmit={handleSubmit} style={{display:'flex',gap:'8px',marginTop:'12px'}}>\n        <input \n          value={email}\n          onChange={(e) => setEmail(e.target.value)}\n          placeholder="Enter email"\n          style={{flex:1,padding:'8px',borderRadius:'6px',background:'#1a1a2e',color:'#fff',border:'1px solid #444'}}\n        />\n        <button type="submit" style={{padding:'8px 16px',borderRadius:'6px',background:'#10b981',color:'#fff',border:'none',cursor:'pointer'}}>\n          Subscribe\n        </button>\n      </form>\n      <p style={{color: status.includes('✅') ? '#10b981' : status.includes('Invalid') ? '#ef4444' : '#06b6d4', marginTop:'8px'}}>\n        {status !== 'idle' && status}\n      </p>\n    </div>\n  );\n}\n\nrender(<ReactForm />);`,
+        xpReward: 10,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 55,
+        title: 'Handling Multiple Inputs',
+        shortDescription: 'Manage complex forms efficiently with dynamic state updates.',
+        fullExplanation: 'When building forms with many fields, maintaining a separate state variable for each input becomes tedious. Instead, use a single state object to hold all form values. Give each `<input>` a `name` attribute that matches the state object key. In the `onChange` handler, use computed property names `[e.target.name]: e.target.value` to update the correct field dynamically.',
+        exampleCode: `function ComplexForm() {\n  const [formData, setFormData] = React.useState({\n    firstName: '',\n    lastName: '',\n    city: ''\n  });\n\n  const handleChange = (e) => {\n    const { name, value } = e.target;\n    setFormData(prev => ({\n      ...prev,\n      [name]: value // Computed property name dynamically sets key\n    }));\n  };\n\n  const inputStyle = {width:'100%',padding:'6px',borderRadius:'6px',border:'1px solid #444',background:'#1a1a2e',color:'#fff',marginBottom:'8px'};\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📋 Multiple Inputs</h3>\n      <form>\n        <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" style={inputStyle} />\n        <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" style={inputStyle} />\n        <input name="city" value={formData.city} onChange={handleChange} placeholder="City" style={inputStyle} />\n      </form>\n      \n      <div style={{background:'#12122a',padding:'8px',borderRadius:'8px',marginTop:'8px'}}>\n        <p style={{color:'#888',fontSize:'12px',margin:'0 0 4px'}}>Current State Object:</p>\n        <pre style={{color:'#06b6d4',margin:0,fontSize:'13px'}}>\n          {JSON.stringify(formData, null, 2)}\n        </pre>\n      </div>\n    </div>\n  );\n}\n\nrender(<ComplexForm />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 56,
+        title: 'Prevent Default Behavior',
+        shortDescription: 'Stop browsers from performing native actions on events.',
+        fullExplanation: 'Browsers have default behaviors for certain events: clicking a link navigates to a new URL, submitting a form reloads the page, right-clicking opens a context menu. In React Single Page Applications (SPAs), you usually want to handle these actions in JavaScript without a page reload. Call `e.preventDefault()` inside your event handler to stop the default browser action.',
+        exampleCode: `function PreventDefaultDemo() {\n  const [logs, setLogs] = React.useState([]);\n  \n  const log = msg => setLogs(p => [msg, ...p].slice(0, 3));\n\n  const handleLinkClick = (e) => {\n    e.preventDefault(); // Stops navigation\n    log('Link clicked, but navigation prevented!');\n  };\n\n  const handleContextMenu = (e) => {\n    e.preventDefault(); // Stops right-click menu\n    log('Right-clicked! Default menu blocked.');\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛑 Prevent Default</h3>\n      <div style={{display:'flex',gap:'12px',marginBottom:'12px'}}>\n        <a href="https://react.dev" onClick={handleLinkClick} style={{color:'#06b6d4',textDecoration:'underline',cursor:'pointer'}}>\n          I am a link\n        </a>\n      </div>\n      \n      <div \n        onContextMenu={handleContextMenu}\n        style={{padding:'20px',background:'#1a1a2e',borderRadius:'8px',border:'1px dashed #7c3aed',textAlign:'center',marginBottom:'12px'}}\n      >\n        Right-click me!\n      </div>\n\n      <div style={{minHeight:'60px'}}>\n        {logs.map((l, i) => <p key={i} style={{color:'#10b981',margin:'2px 0',fontSize:'13px'}}>{l}</p>)}\n      </div>\n    </div>\n  );\n}\n\nrender(<PreventDefaultDemo />);`,
+        xpReward: 10,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 57,
+        title: 'Lifting State Up (Review)',
+        shortDescription: 'Share state between components by moving it to their common parent.',
+        fullExplanation: 'When multiple components need to reflect the same changing data, you should lift the shared state up to their closest common ancestor. The parent owns the state and passes both the state value AND a callback function down to the children as props. The children display the value and call the parent\'s function when an update occurs.',
+        exampleCode: `function CounterDisplay({ val }) {\n  return <span style={{fontSize:'24px',color:'#10b981',fontWeight:'bold',margin:'0 16px'}}>{val}</span>;\n}\n\nfunction CounterButton({ increment, onAction }) {\n  return (\n    <button \n      onClick={() => onAction(increment)} \n      style={{padding:'8px 16px',borderRadius:'6px',background:'#7c3aed',color:'#fff',border:'none',cursor:'pointer'}}\n    >\n      Add {increment}\n    </button>\n  );\n}\n\n// The Parent owns the state!\nfunction App() {\n  const [total, setTotal] = React.useState(0);\n\n  const handleAdd = (amount) => setTotal(prev => prev + amount);\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>🏗️ Lifting State Up</h3>\n      <p style={{color:'#888',fontSize:'13px'}}>Parent manages state, children read/update it.</p>\n      <div style={{padding:'16px',background:'#1a1a2e',borderRadius:'12px',border:'1px solid #333',display:'flex',alignItems:'center',justifyContent:'center'}}>\n        <CounterButton increment={1} onAction={handleAdd} />\n        <CounterDisplay val={total} />\n        <CounterButton increment={5} onAction={handleAdd} />\n      </div>\n    </div>\n  );\n}\n\nrender(<App />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 58,
+        title: 'Sharing State Between Components',
+        shortDescription: 'Synchronize multiple inputs connected to the same state.',
+        fullExplanation: 'A classic example of lifted state is synchronization. Imagine two inputs that need to stay in sync (like a Markdown editor and its preview). By lifting the text state to their common parent, you guarantee that independent child components always reflect identical data. When either child changes the data, the parent triggers a unified re-render.',
+        exampleCode: `function InputA({ value, onChange }) {\n  return (\n    <label style={{display:'flex',flexDirection:'column',gap:'4px'}}>\n      <span style={{color:'#888',fontSize:'12px'}}>Child 1 Input</span>\n      <input value={value} onChange={e => onChange(e.target.value)} style={{padding:'6px',borderRadius:'4px',background:'#1a1a2e',color:'#06b6d4',border:'1px solid #444'}}/>\n    </label>\n  );\n}\n\nfunction InputB({ value, onChange }) {\n  return (\n    <label style={{display:'flex',flexDirection:'column',gap:'4px'}}>\n      <span style={{color:'#888',fontSize:'12px'}}>Child 2 Input</span>\n      <input value={value} onChange={e => onChange(e.target.value)} style={{padding:'6px',borderRadius:'4px',background:'#1a1a2e',color:'#f59e0b',border:'1px solid #444'}}/>\n    </label>\n  );\n}\n\nfunction SyncedApp() {\n  const [sharedText, setSharedText] = React.useState('Hello World');\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔗 Shared State</h3>\n      <div style={{display:'flex',gap:'16px'}}>\n        <InputA value={sharedText} onChange={setSharedText} />\n        <InputB value={sharedText} onChange={setSharedText} />\n      </div>\n      <p style={{marginTop:'12px',color:'#10b981',fontSize:'14px'}}>Shared: <strong>{sharedText}</strong></p>\n    </div>\n  );\n}\n\nrender(<SyncedApp />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 59,
+        title: 'Derived State',
+        shortDescription: 'Calculate values on the fly instead of storing them in state.',
+        fullExplanation: 'A major anti-pattern in React is storing data in state when it can be calculated from existing state. For instance, if you have `firstName` and `lastName` in state, do NOT put `fullName` in state as well. Simply calculate it during render: `const fullName = firstName + " " + lastName`. This prevents bugs where related states get out of sync.',
+        exampleCode: `function DerivedStateDemo() {\n  const [cartItems, setCartItems] = React.useState([\n    { name: 'Apple', price: 1.50, qty: 2 },\n    { name: 'Banana', price: 0.80, qty: 5 }\n  ]);\n\n  // ✅ GOOD: Derived state computed during render\n  // No need for a separate \`total\` state!\n  const totalCost = cartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);\n  const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);\n\n  const addApple = () => {\n    setCartItems(prev => {\n      const newArr = [...prev];\n      newArr[0].qty++;\n      return newArr;\n    });\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🧮 Derived State</h3>\n      {cartItems.map((item, i) => (\n        <p key={i} style={{color:'#888',margin:'4px 0',fontSize:'14px'}}>\n          {item.name} x {item.qty} = <span style={{color:'#06b6d4'}}>{'$'}{(item.price * item.qty).toFixed(2)}</span>\n        </p>\n      ))}\n      <hr style={{border:'1px solid #333',margin:'8px 0'}}/>\n      <p style={{color:'#10b981',fontSize:'18px',margin:'0 0 8px'}}>Total ({totalItems} items): <strong>{'$'}{totalCost.toFixed(2)}</strong></p>\n      <button onClick={addApple} style={{padding:'6px 12px',borderRadius:'6px',background:'#f59e0b',color:'#000',border:'none',cursor:'pointer'}}>+ Add Apple</button>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'8px'}}>Total automatically updates on render!</p>\n    </div>\n  );\n}\n\nrender(<DerivedStateDemo />);`,
+        xpReward: 15,
+        levelRequired: 2,
+        difficulty: 'Intermediate'
     }
 ];
 
