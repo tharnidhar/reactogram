@@ -793,6 +793,137 @@ const lessons = [
         xpReward: 10,
         levelRequired: 4,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 6 — Rendering & Performance =====
+    {
+        id: 80,
+        title: 'Reconciliation',
+        shortDescription: 'Understand how React updates the DOM via the Virtual DOM.',
+        fullExplanation: 'Reconciliation is the process React uses to figure out what changed in the Virtual DOM and how to apply those changes to the actual browser DOM efficiently. Instead of rebuilding the whole page, React compares the new Virtual DOM with a snapshot of the old one, calculates the minimal set of changes (mutations), and applies only those.',
+        exampleCode: `function ReconciliationDemo() {\n  const [time, setTime] = React.useState(new Date().toLocaleTimeString());\n\n  React.useEffect(() => {\n    const id = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);\n    return () => clearInterval(id);\n  }, []);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🏗️ Reconciliation</h3>\n      <p style={{color:'#888',fontSize:'14px',lineHeight:'1.5'}}>\n        Notice how only the timestamp changes? React doesn't re-render this whole text block \n        in the actual DOM. It reconciles the Virtual DOM, sees only the strict text node changed, \n        and natively updates just that specific node.\n      </p>\n      <div style={{padding:'12px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #333',display:'inline-block'}}>\n        <span style={{color:'#06b6d4',fontWeight:'bold',fontSize:'20px'}}>{time}</span>\n      </div>\n    </div>\n  );\n}\n\nrender(<ReconciliationDemo />);`,
+        xpReward: 15,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 81,
+        title: 'Diffing Algorithm',
+        shortDescription: 'The heuristics React uses to perform O(n) Virtual DOM comparisons.',
+        fullExplanation: 'Comparing two arbitrary trees is computationally O(n^3). React uses a heuristic O(n) algorithm based on two rules: 1) Two elements of different types will produce different trees (it immediately tears down the old tree). 2) The developer can hint at which child elements may be stable across different renders with a `key` prop.',
+        exampleCode: `function DiffingDemo() {\n  const [isDiv, setIsDiv] = React.useState(true);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔍 Diffing Algorithm</h3>\n      <button \n        onClick={() => setIsDiv(!isDiv)} \n        style={{marginBottom:'12px',padding:'6px 12px',background:'#ef4444',color:'#fff',border:'none',borderRadius:'4px'}}\n      >\n        Toggle Element Type\n      </button>\n      \n      <div style={{minHeight:'100px',padding:'16px',border:'1px dashed #444',borderRadius:'6px'}}>\n        {isDiv ? (\n          // Type 1: A div\n          <div style={{background:'#1a1a2e',padding:'12px'}}>\n            <p style={{color:'#10b981',margin:0}}>I am a &lt;div&gt;.</p>\n            <input placeholder="Type here..." style={{marginTop:'8px',padding:'4px'}} />\n          </div>\n        ) : (\n          // Type 2: A section (Different type! State is destroyed!)\n          <section style={{background:'#2e1a1a',padding:'12px'}}>\n            <p style={{color:'#f59e0b',margin:0}}>I am a &lt;section&gt;.</p>\n            <input placeholder="Type here..." style={{marginTop:'8px',padding:'4px'}} />\n          </section>\n        )}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'8px'}}>Notice how the input loses its text when you switch? React sees a new element type and destroys the old sub-tree entirely.</p>\n    </div>\n  );\n}\n\nrender(<DiffingDemo />);`,
+        xpReward: 15,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 82,
+        title: 'Batching',
+        shortDescription: 'Combine multiple state updates into a single re-render.',
+        fullExplanation: 'When you call multiple state setters (e.g., `setCount(1)` then `setName("A")`) inside a React event handler (like an `onClick`), React doesn\'t re-render twice. It "batches" them together and re-renders only once. This vastly improves performance. Before React 18, this only happened automatically inside React event handlers.',
+        exampleCode: `function BatchingDemo() {\n  const [clicks, setClicks] = React.useState(0);\n  const [renders, setRenders] = React.useState(0);\n  const renderCount = React.useRef(0);\n\n  renderCount.current++;\n\n  const handleBatchedUpdate = () => {\n    // Both of these run BEFORE the component re-renders once.\n    setClicks(c => c + 1);\n    setRenders(c => c + 1);\n  };\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>📦 Batching</h3>\n      <div style={{display:'flex',justifyContent:'center',gap:'20px',marginBottom:'16px'}}>\n        <p style={{color:'#06b6d4'}}>State 1: <strong style={{fontSize:'20px'}}>{clicks}</strong></p>\n        <p style={{color:'#f59e0b'}}>State 2: <strong style={{fontSize:'20px'}}>{renders}</strong></p>\n      </div>\n      <button \n        onClick={handleBatchedUpdate} \n        style={{padding:'8px 16px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'6px',cursor:'pointer'}}\n      >\n        Update Both States\n      </button>\n      <p style={{color:'#10b981',marginTop:'16px',fontWeight:'bold'}}>\n        Actual Render Count: {renderCount.current}\n      </p>\n    </div>\n  );\n}\n\nrender(<BatchingDemo />);`,
+        xpReward: 15,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 83,
+        title: 'Automatic Batching (React 18)',
+        shortDescription: 'React 18 batches state updates regardless of where they happen.',
+        fullExplanation: 'In React 18, batching was upgraded to "Automatic Batching". Now, React batches state updates even if they happen inside asynchronous functions (like `setTimeout`, Promises, or native event listeners). In older versions, an async function with two state updates would cause two re-renders. Now, it correctly causes just one.',
+        exampleCode: `function AutoBatching() {\n  const [data, setData] = React.useState(null);\n  const [loading, setLoading] = React.useState(false);\n  const renders = React.useRef(0);\n  renders.current++;\n\n  const handleAsyncUpdate = () => {\n    // In React 17, inside a setTimeout, these caused 2 renders.\n    // In React 18, they are automatically batched into 1 render!\n    setTimeout(() => {\n      setData('Loaded Data!');\n      setLoading(false);\n    }, 1000);\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚙️ Automatic Batching</h3>\n      <button onClick={handleAsyncUpdate} style={{padding:'6px 12px',background:'#10b981',color:'#fff',border:'none',borderRadius:'4px',marginBottom:'12px'}}>\n        Trigger Async Updates\n      </button>\n      <div style={{background:'#1a1a2e',padding:'12px',borderRadius:'8px',border:'1px solid #333'}}>\n        <p style={{margin:0,color:'#06b6d4'}}>Data: {data || 'None'}</p>\n        <p style={{margin:'4px 0 0',color:'#f59e0b'}}>Loading: {loading ? 'True' : 'False'}</p>\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'8px'}}>Component rendered {renders.current} times.</p>\n    </div>\n  );\n}\n\nrender(<AutoBatching />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 84,
+        title: 'Concurrent Rendering',
+        shortDescription: 'React 18\'s ability to interrupt and prioritize rendering tasks.',
+        fullExplanation: 'Historically, once React started rendering a component tree, you couldn\'t stop it until it finished (blocking the main thread). Concurrent Rendering allows React to pause, yield back to the browser (to handle user input like typing), and resume rendering later. This makes apps feel incredibly responsive even under heavy CPU load.',
+        exampleCode: `function ConcurrencyConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🚦 Concurrent Rendering</h3>\n      <p style={{color:'#888',fontSize:'14px',lineHeight:'1.5'}}>\n        Concurrent rendering itself is an under-the-hood engine upgrade in React 18. \n        You don't write "concurrent code" directly. Instead, you use new hooks like \n        <code>useTransition</code> and <code>useDeferredValue</code> to tell React \n        which updates are low-priority so it can yield to high-priority updates \n        (like typing in an input field).\n      </p>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #f59e0b'}}>\n        <h4 style={{margin:'0 0 8px',color:'#fff'}}>The analogy</h4>\n        <p style={{margin:0,color:'#ccc',fontSize:'13px'}}>\n          Imagine cooking a multi-course meal (heavy render). If the phone rings \n          (user typing), you can set down the knife, answer the phone, and resume \n        chopping later. That's concurrency.\n        </p>\n      </div>\n    </div>\n  );\n}\n\nrender(<ConcurrencyConcept />);`,
+        xpReward: 10,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 85,
+        title: 'useTransition',
+        shortDescription: 'Mark a state update as a non-blocking transition.',
+        fullExplanation: '`useTransition` provides an `isPending` flag and a `startTransition` function. By wrapping a state setter in `startTransition`, you tell React: "This update is low priority. If the user does something else like typing, pause this work and handle the typing first." It is essential for heavy UI filtering or navigation.',
+        exampleCode: `// NOTE: To truly see the effect, you need thousands of DOM nodes. \n// We simulate it here.\nfunction TransitionDemo() {\n  const [isPending, startTransition] = React.useTransition();\n  const [query, setQuery] = React.useState('');\n  const [list, setList] = React.useState([]);\n\n  const handleChange = (e) => {\n    // 1. High-priority update: The input field typing\n    setQuery(e.target.value);\n\n    // 2. Low-priority update: Filtering a massive list\n    startTransition(() => {\n      const l = [];\n      for(let i=0; i<5000; i++) l.push(e.target.value);\n      setList(l);\n    });\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🌊 useTransition</h3>\n      <input \n        value={query} \n        onChange={handleChange}\n        placeholder="Type quickly..." \n        style={{padding:'8px',width:'100%',borderRadius:'6px',border:'1px solid #444',background:'#1a1a2e',color:'#fff'}}\n      />\n      <div style={{marginTop:'12px',minHeight:'40px'}}>\n        {isPending ? (\n          <span style={{color:'#f59e0b'}}>⏳ Processing heavy list...</span>\n        ) : (\n          <span style={{color:'#10b981'}}>List size: {list.length}</span>\n        )}\n      </div>\n    </div>\n  );\n}\n\nrender(<TransitionDemo />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 86,
+        title: 'useDeferredValue',
+        shortDescription: 'Defer updating a part of the UI to keep it responsive.',
+        fullExplanation: 'Similar to `useTransition`, `useDeferredValue` is for concurrency. However, instead of wrapping the state *setter*, you wrap the *value* itself. `const deferredQuery = useDeferredValue(query)`. React will return the old value during an urgent render (like typing), and then spawn a background re-render to update the deferred value later.',
+        exampleCode: `function SlowList({ text }) {\n  // In reality, this would be a super slow component.\n  return <p style={{color:'#06b6d4',wordBreak:'break-all'}}>{text.repeat(10)}</p>;\n}\n\nfunction DeferredValueDemo() {\n  const [text, setText] = React.useState('');\n  // Wait to update this value until the main thread is idle\n  const deferredText = React.useDeferredValue(text);\n  \n  // Check if we are currently lagging behind real-time state\n  const isStale = text !== deferredText;\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🕰️ useDeferredValue</h3>\n      <input \n        value={text} \n        onChange={e => setText(e.target.value)}\n        placeholder="Type to defer..." \n        style={{padding:'8px',width:'100%',borderRadius:'6px',border:'1px solid #444',background:'#1a1a2e',color:'#fff'}}\n      />\n      <div style={{marginTop:'12px', opacity: isStale ? 0.5 : 1, transition: 'opacity 0.2s'}}>\n        <SlowList text={deferredText} />\n      </div>\n    </div>\n  );\n}\n\nrender(<DeferredValueDemo />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 87,
+        title: 'Lazy Loading',
+        shortDescription: 'Load components and code only when they are needed.',
+        fullExplanation: 'In large applications, sending the entire JavaScript bundle to the user on initial load kills performance. Lazy Loading is the architectural pattern of deferring the initialization of code until the user actually requests it (e.g., clicking on a modal or navigating to a new route).',
+        exampleCode: `function LazyLoadingConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🐢 Lazy Loading</h3>\n      <p style={{color:'#888',fontSize:'14px',lineHeight:'1.5'}}>\n        Imagine a Heavy Dashboard Route taking up 500KB of JavaScript. \n        If the user lands on the Login page, they shouldn't download that 500KB \n        until they actually successfully log in and route to the dashboard.\n      </p>\n      <ul style={{color:'#10b981',fontSize:'14px'}}>\n        <li>Improves First Contentful Paint (FCP)</li>\n        <li>Reduces memory footprint</li>\n        <li>Saves bandwidth</li>\n      </ul>\n    </div>\n  );\n}\n\nrender(<LazyLoadingConcept />);`,
+        xpReward: 10,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 88,
+        title: 'React.lazy',
+        shortDescription: 'Dynamically import a component only when it is rendered.',
+        fullExplanation: '`React.lazy` is a function that lets you render a dynamic import as a regular component. It takes a function that must call `import()` and return a Promise resolving to a module with a `default` export containing a React component. Note: `React.lazy` must be used in conjunction with `<Suspense>`.',
+        exampleCode: `// Concept simulation (Dynamic imports aren't directly executable in this sandbox)\nfunction ReactLazyDemo() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>💤 React.lazy</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#06b6d4'}}>\n        {/* Simulated Code block */}\n        <span style={{color:'#f59e0b'}}>import</span> React, { '{ lazy, Suspense }' } from 'react';<br/><br/>\n        <span style={{color:'#888'}}>// Tell Webpack to split this into its own chunk</span><br/>\n        const HeavyGraph = <span style={{color:'#f59e0b'}}>lazy</span>(() =&gt; import('./HeavyGraph'));<br/><br/>\n        function App() {'{'}<br/>\n        &nbsp;&nbsp;return (<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Suspense fallback=&#123;&lt;p&gt;Loading...&lt;/p&gt;&#125;&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;HeavyGraph /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Suspense&gt;<br/>\n        &nbsp;&nbsp;);<br/>\n        {'}'}\n      </div>\n    </div>\n  );\n}\n\nrender(<ReactLazyDemo />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 89,
+        title: 'Suspense',
+        shortDescription: 'Display a fallback UI while a component resource is loading.',
+        fullExplanation: '`<Suspense fallback={<Spinner />}>` lets you specify a loading indicator for parts of your component tree if it\'s not yet ready to render. It works with `React.lazy` components, and in modern React frameworks (like Next.js), it also works directly with asynchronous data fetching inside Server Components.',
+        exampleCode: `// Simulating a component that throws a Promise (how Suspense works internally)\nlet cache = null;\nfunction SuspendingComponent() {\n  if (!cache) {\n    throw new Promise(res => setTimeout(() => { cache = 'Loaded!'; res(); }, 2000));\n  }\n  return <div style={{padding:'20px',background:'#10b981',color:'#fff',borderRadius:'8px',fontWeight:'bold'}}>✅ {cache}</div>;\n}\n\nfunction SuspenseDemo() {\n  const [show, setShow] = React.useState(false);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎭 Suspense</h3>\n      <button onClick={() => setShow(true)} disabled={show} style={{padding:'6px 12px',background:show?'#333':'#3b82f6',color:'#fff',border:'none',borderRadius:'4px',marginBottom:'12px'}}>\n        Mount Component\n      </button>\n      \n      {show && (\n        <React.Suspense fallback={<div style={{padding:'20px',background:'#f59e0b',color:'#000',borderRadius:'8px'}}>⏳ Suspending (Fallback UI)...</div>}>\n          <SuspendingComponent />\n        </React.Suspense>\n      )}\n    </div>\n  );\n}\n\nrender(<SuspenseDemo />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 90,
+        title: 'Code Splitting',
+        shortDescription: 'Split your JavaScript bundle into smaller, manageable chunks.',
+        fullExplanation: 'Bundlers like Webpack or Vite combine all your files into one giant payload. Code splitting is the configuration or syntax (like dynamic `import()`) that tells the bundler to split the file up. The browser loads primary chunks first, and fetches secondary chunks only when `React.lazy` or router navigation requires them.',
+        exampleCode: `function CodeSplittingConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🪓 Code Splitting</h3>\n      <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>\n        <div style={{flex:1,background:'#2e1a1a',padding:'12px',borderRadius:'8px',border:'1px dashed #ef4444'}}>\n          <h4 style={{margin:'0 0 8px',color:'#ef4444'}}>Without Splitting</h4>\n          <div style={{height:'60px',background:'#ef4444',borderRadius:'4px',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>\n            main.js (2.5MB)\n          </div>\n        </div>\n        <div style={{flex:1,background:'#1a2e1a',padding:'12px',borderRadius:'8px',border:'1px dashed #10b981'}}>\n           <h4 style={{margin:'0 0 8px',color:'#10b981'}}>With Splitting</h4>\n          <div style={{display:'flex',gap:'4px'}}>\n            <div style={{flex:1,height:'60px',background:'#10b981',borderRadius:'4px',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:'12px'}}>main (150kb)</div>\n            <div style={{flex:1,height:'60px',background:'#3b82f6',borderRadius:'4px',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:'12px'}}>routeA (80kb)</div>\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<CodeSplittingConcept />);`,
+        xpReward: 15,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 91,
+        title: 'Dynamic Imports',
+        shortDescription: 'The vanilla JavaScript feature that enables lazy loading.',
+        fullExplanation: 'React.lazy relies entirely on the ES Modules standard for dynamic imports. Instead of static imports at the top of the file `import { add } from "./math"`, you call `import("./math")` as a function anywhere in your code. It returns a Promise. When Webpack/Vite encounters this, it automatically initiates code splitting.',
+        exampleCode: `function DynamicImportDemo() {\n  const [result, setResult] = React.useState(null);\n  const [loading, setLoading] = React.useState(false);\n\n  const handleLoadMath = async () => {\n    setLoading(true);\n    // Mocking an asynchronous dynamic import request\n    await new Promise(res => setTimeout(res, 1500));\n    \n    // const math = await import('./math.js');\n    // setResult(math.add(5, 7));\n    setResult(12);\n    setLoading(false);\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📦 Dynamic Imports</h3>\n      <button onClick={handleLoadMath} disabled={loading} style={{padding:'8px 16px',background:'#f59e0b',color:'#000',border:'none',borderRadius:'6px',cursor:loading?'not-allowed':'pointer'}}>\n        {loading ? 'Fetching chunk...' : 'import("./math.js")'}\n      </button>\n      {result && <p style={{color:'#10b981',marginTop:'12px',fontSize:'18px'}}>Result of math.add(5,7) is <strong>{result}</strong></p>}\n    </div>\n  );\n}\n\nrender(<DynamicImportDemo />);`,
+        xpReward: 15,
+        levelRequired: 5,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 92,
+        title: 'Profiler API',
+        shortDescription: 'Measure the rendering performance of a React tree programmatically.',
+        fullExplanation: 'While browser dev tools are great, React provides a built-in `<Profiler>` component to measure the rendering cost of any part of your tree in code. You wrap your components, provide an `id` and an `onRender` callback function. React will call your function with metrics like the "actual duration" of that specific render phase.',
+        exampleCode: `function Work() {\n  // Burn some CPU\n  let i = 0; while (i < 5000000) i++;\n  return <div style={{padding:'10px',background:'#1a1a2e',color:'#06b6d4',borderRadius:'4px'}}>Heavy Work Complete</div>;\n}\n\nfunction ProfilerDemo() {\n  const [count, setCount] = React.useState(0);\n  const [duration, setDuration] = React.useState(0);\n\n  const onRenderCallback = (id, phase, actualDuration) => {\n    setDuration(actualDuration.toFixed(2));\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⏱️ Profiler API</h3>\n      <button onClick={() => setCount(c => c+1)} style={{marginBottom:'12px',padding:'6px 12px',background:'#10b981',color:'#fff',border:'none',borderRadius:'4px'}}>\n        Trigger Render ({count})\n      </button>\n      \n      <React.Profiler id="HeavyWork" onRender={onRenderCallback}>\n        <Work />\n      </React.Profiler>\n\n      <p style={{color:'#f59e0b',marginTop:'12px'}}>\n        Last render took: <strong>{duration} ms</strong>\n      </p>\n    </div>\n  );\n}\n\nrender(<ProfilerDemo />);`,
+        xpReward: 20,
+        levelRequired: 5,
+        difficulty: 'Advanced'
     }
 ];
 

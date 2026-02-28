@@ -2,7 +2,7 @@ const achievements = [
     { id: 'first_lesson', title: 'First Steps', description: 'Complete your first lesson', icon: '🐣', condition: (p) => p.completedLessons.length >= 1 },
     { id: 'five_lessons', title: 'Getting Hooked', description: 'Complete 5 lessons', icon: '🎣', condition: (p) => p.completedLessons.length >= 5 },
     { id: 'ten_lessons', title: 'Double Digits', description: 'Complete 10 lessons', icon: '🔟', condition: (p) => p.completedLessons.length >= 10 },
-    { id: 'all_lessons', title: 'React Master', description: 'Complete all 79 lessons', icon: '👑', condition: (p) => p.completedLessons.length >= 79 },
+    { id: 'all_lessons', title: 'React Master', description: 'Complete all 92 lessons', icon: '👑', condition: (p) => p.completedLessons.length >= 92 },
     { id: 'level_2', title: 'Rising Star', description: 'Reach Level 2', icon: '⭐', condition: (p) => Math.floor(Math.sqrt(p.xp / 10)) >= 2 },
     { id: 'level_5', title: 'Pro Coder', description: 'Reach Level 5', icon: '💎', condition: (p) => Math.floor(Math.sqrt(p.xp / 10)) >= 5 },
     { id: 'level_10', title: 'Legend', description: 'Reach Level 10', icon: '🏆', condition: (p) => Math.floor(Math.sqrt(p.xp / 10)) >= 10 },
