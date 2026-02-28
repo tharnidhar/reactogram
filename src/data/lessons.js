@@ -924,6 +924,107 @@ const lessons = [
         xpReward: 20,
         levelRequired: 5,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 7 — Routing =====
+    {
+        id: 93,
+        title: 'Client-side Routing',
+        shortDescription: 'Navigate between pages without triggering a full browser refresh.',
+        fullExplanation: 'Traditional websites make a new request to the server for every page click, causing a full page reload. Single Page Applications (SPAs) like React use Client-side Routing. When a user clicks a link, the router intercepts it, prevents the default reload, updates the browser URL, and React immediately renders the new component for that URL.',
+        exampleCode: `function ClientRoutingConcept() {\n  const [route, setRoute] = React.useState('/home');\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🗺️ Client-side Routing</h3>\n      <div style={{display:'flex',gap:'8px',marginBottom:'16px'}}>\n        {['/home', '/about', '/contact'].map(path => (\n          <button \n            key={path} \n            onClick={() => setRoute(path)}\n            style={{\n              padding:'6px 12px',borderRadius:'4px',cursor:'pointer',border:'none',\n              background: route === path ? '#3b82f6' : '#333',\n              color: '#fff'\n            }}\n          >\n            {path}\n          </button>\n        ))}\n      </div>\n      <div style={{padding:'24px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #444',textAlign:'center'}}>\n        {route === '/home' && <h2 style={{color:'#10b981',margin:0}}>🏠 Home Page</h2>}\n        {route === '/about' && <h2 style={{color:'#f59e0b',margin:0}}>ℹ️ About Us</h2>}\n        {route === '/contact' && <h2 style={{color:'#06b6d4',margin:0}}>📞 Contact</h2>}\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'12px'}}>\n        Notice how the "pages" change instantly without a loading spinner? That's client-side routing in action!\n      </p>\n    </div>\n  );\n}\n\nrender(<ClientRoutingConcept />);`,
+        xpReward: 10,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 94,
+        title: 'BrowserRouter',
+        shortDescription: 'The core provider component that enables React Router.',
+        fullExplanation: 'To use React Router, you must wrap your entire application (or the part that needs routing) in a `<BrowserRouter>`. This component under the hood uses the HTML5 History API (`pushState`, `replaceState`, and `popstate` events) to keep your UI in sync with the URL. It provides the routing context to all nested router components.',
+        exampleCode: `function BrowserRouterDemo() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🌐 BrowserRouter</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#06b6d4'}}>\n        <span style={{color:'#f59e0b'}}>import</span> { '{ BrowserRouter }' } from 'react-router-dom';<br/><br/>\n        function App() {'{'}<br/>\n        &nbsp;&nbsp;return (<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span style={{color:'#10b981'}}>BrowserRouter</span>&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Header /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;MainContent /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span style={{color:'#10b981'}}>BrowserRouter</span>&gt;<br/>\n        &nbsp;&nbsp;);<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'12px'}}>\n        Once wrapped, any component inside can read the current URL or trigger navigation.\n      </p>\n    </div>\n  );\n}\n\nrender(<BrowserRouterDemo />);`,
+        xpReward: 10,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 95,
+        title: 'Routes & Route',
+        shortDescription: 'Define URL paths and the components they should render.',
+        fullExplanation: 'The `<Routes>` component acts as a switch. It looks at the current URL and renders the first `<Route>` that matches. A `<Route>` takes a `path` prop (the URL) and an `element` prop (the JSX component to render). If you use `path="*"`, it acts as a catch-all for 404 Not Found pages.',
+        exampleCode: `function RoutesDemo() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛣️ Routes & Route</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        &lt;<span style={{color:'#10b981'}}>Routes</span>&gt;<br/>\n        &nbsp;&nbsp;{/* Exact match for the root URL */}<br/>\n        &nbsp;&nbsp;&lt;<span style={{color:'#3b82f6'}}>Route</span> <span style={{color:'#f59e0b'}}>path</span>="/" <span style={{color:'#f59e0b'}}>element</span>=&#123;&lt;Home /&gt;&#125; /&gt;<br/><br/>\n        &nbsp;&nbsp;{/* Standard path */}<br/>\n        &nbsp;&nbsp;&lt;<span style={{color:'#3b82f6'}}>Route</span> <span style={{color:'#f59e0b'}}>path</span>="/dashboard" <span style={{color:'#f59e0b'}}>element</span>=&#123;&lt;Dashboard /&gt;&#125; /&gt;<br/><br/>\n        &nbsp;&nbsp;{/* Catch-all for unmatched URLs (404) */}<br/>\n        &nbsp;&nbsp;&lt;<span style={{color:'#3b82f6'}}>Route</span> <span style={{color:'#f59e0b'}}>path</span>="*" <span style={{color:'#f59e0b'}}>element</span>=&#123;&lt;NotFound /&gt;&#125; /&gt;<br/>\n        &lt;/<span style={{color:'#10b981'}}>Routes</span>&gt;\n      </div>\n    </div>\n  );\n}\n\nrender(<RoutesDemo />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 96,
+        title: 'Route Parameters',
+        shortDescription: 'Create dynamic URLs to capture IDs and variables.',
+        fullExplanation: 'Often, you don\'t want a hardcoded URL. You want a pattern like `/users/:id` that matches `/users/123` and `/users/abc`. By placing a colon `:` before a path segment, you turn it into a dynamic parameter. React Router will parse the URL and extract that specific segment so your component can use it.',
+        exampleCode: `function RouteParamsDemo() {\n  const [path, setPath] = React.useState('/products/p_7734');\n\n  // Simulating React Router's internal matching engine\n  const match = path.match(/^\\/products\\/(.+)$/);\n  const productId = match ? match[1] : null;\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔗 Route Parameters</h3>\n      <div style={{marginBottom:'12px'}}>\n        <span style={{color:'#888'}}>Route Definition: </span>\n        <code style={{color:'#f59e0b'}}>/products/:productId</code>\n      </div>\n      <input \n        value={path} \n        onChange={e => setPath(e.target.value)}\n        style={{width:'100%',padding:'8px',background:'#1a1a2e',color:'#fff',border:'1px solid #444',borderRadius:'4px'}}\n      />\n      <div style={{marginTop:'12px',padding:'16px',background:'#2e1a2e',borderRadius:'8px',border:'1px dashed #7c3aed'}}>\n        {productId ? (\n          <p style={{margin:0,color:'#06b6d4',fontSize:'18px'}}>\n            Viewing Product ID: <strong>{productId}</strong>\n          </p>\n        ) : (\n          <p style={{margin:0,color:'#ef4444'}}>No match for this route!</p>\n        )}\n      </div>\n    </div>\n  );\n}\n\nrender(<RouteParamsDemo />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 97,
+        title: 'Nested Routes',
+        shortDescription: 'Render sub-components inside a parent route layout.',
+        fullExplanation: 'Nested routing allows you to define routes inside other routes. The parent route acts as a layout (like a sidebar and header), and it decides where to render the matched child route by using an `<Outlet />` component. This is incredibly powerful for building complex, multi-layered dashboards.',
+        exampleCode: `function NestedRoutesDemo() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🪆 Nested Routes</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        &lt;Routes&gt;<br/>\n        &nbsp;&nbsp;{/* Parent Route acts as a layout */}<br/>\n        &nbsp;&nbsp;&lt;Route path="/settings" element=&#123;&lt;SettingsLayout /&gt;&#125;&gt;<br/><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;{/* Child matched at /settings/profile */}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Route path="profile" element=&#123;&lt;Profile /&gt;&#125; /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;{/* Child matched at /settings/billing */}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Route path="billing" element=&#123;&lt;Billing /&gt;&#125; /&gt;<br/><br/>\n        &nbsp;&nbsp;&lt;/Route&gt;<br/>\n        &lt;/Routes&gt;\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'12px'}}>\n        Inside <code>&lt;SettingsLayout /&gt;</code>, you must place an <code>&lt;Outlet /&gt;</code> where the child component should inject its UI.\n      </p>\n    </div>\n  );\n}\n\nrender(<NestedRoutesDemo />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 98,
+        title: 'useNavigate',
+        shortDescription: 'Programmatically navigate the user to a different URL.',
+        fullExplanation: 'While users usually navigate by clicking `<Link>` components, sometimes you need to perform navigation programmatically, like after a successful form submission or a login API call. `useNavigate()` returns a function that lets you push a new URL to the history stack, or replace the current one.',
+        exampleCode: `// Concept Demo: Demonstrating imperative navigation logic\nfunction NavigateDemo() {\n  const [loading, setLoading] = React.useState(false);\n  const [success, setSuccess] = React.useState(false);\n\n  const handleSubmit = () => {\n    setLoading(true);\n    // 1. Perform action (API call)\n    setTimeout(() => {\n      setLoading(false);\n      setSuccess(true);\n      // 2. navigate('/dashboard');\n    }, 1500);\n  };\n\n  if (success) {\n    return (\n      <div style={{padding:'20px',textAlign:'center'}}>\n        <h3 style={{color:'#10b981'}}>✅ Login Success!</h3>\n        <p style={{color:'#888'}}>In reality, you were just navigated to /dashboard</p>\n        <button onClick={() => setSuccess(false)} style={{marginTop:'12px',padding:'6px 12px'}}>Go Back</button>\n      </div>\n    );\n  }\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🚀 useNavigate</h3>\n      <div style={{padding:'16px',background:'#1a1a2e',borderRadius:'8px',border:'1px solid #333',textAlign:'center'}}>\n        <p style={{color:'#ccc'}}>Click to simulate a login API call, followed by a programmatic navigation.</p>\n        <button \n          onClick={handleSubmit} \n          disabled={loading}\n          style={{padding:'8px 24px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'6px',cursor:loading?'not-allowed':'pointer',fontSize:'16px'}}\n        >\n          {loading ? 'Authenticating...' : 'Log In'}\n        </button>\n      </div>\n    </div>\n  );\n}\n\nrender(<NavigateDemo />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 99,
+        title: 'useParams',
+        shortDescription: 'Read the dynamic parameters extracted from the current URL.',
+        fullExplanation: 'When you define a dynamic route like `/users/:userId`, the component rendered at that route needs to know the actual ID to fetch the correct data. The `useParams()` hook returns an object of key/value pairs of the dynamic params parsed from the URL. Example: `{ userId: "123" }`.',
+        exampleCode: `function UseParamsConcept() {\n  // In a real app, this hook extracts the params from React Router context:\n  // const { invoiceId } = React.useParams();\n  \n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🎣 useParams</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// Route defined as /invoices/:invoiceId</span><br/><br/>\n        function InvoiceDetails() {'{'}<br/>\n        &nbsp;&nbsp;const { '{ invoiceId }' } = <span style={{color:'#10b981'}}>useParams()</span>;<br/><br/>\n        &nbsp;&nbsp;React.useEffect(() =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;fetchInvoice(invoiceId);<br/>\n        &nbsp;&nbsp;{'}'}, [invoiceId]);<br/><br/>\n        &nbsp;&nbsp;return &lt;div&gt;Invoice #&#123;invoiceId&#125;&lt;/div&gt;;<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'12px'}}>\n        It automatically updates if the URL parameter changes, making it easy to use inside useEffect dependency arrays.\n      </p>\n    </div>\n  );\n}\n\nrender(<UseParamsConcept />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 100,
+        title: 'useLocation',
+        shortDescription: 'Access the current URL state, including search queries and hash.',
+        fullExplanation: 'The `useLocation()` hook returns a `location` object that represents the current URL. This object contains useful properties like `pathname` (e.g., `/about`), `search` (the query string, e.g., `?sort=name`), and `hash` (e.g., `#section-2`). It is particularly useful when you need to parse query parameters (using `URLSearchParams`) or trigger an analytics page view event.',
+        exampleCode: `function LocationDemo() {\n  // Simulating the object returned by useLocation()\n  const location = {\n    pathname: '/products',\n    search: '?category=shoes&sort=price_asc',\n    hash: '#reviews'\n  };\n\n  // Parsing the search string natively in JS\n  const searchParams = new URLSearchParams(location.search);\n  const category = searchParams.get('category');\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📍 useLocation</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333'}}>\n        <p style={{margin:'0 0 8px',color:'#888'}}>Current URL: <span style={{color:'#fff'}}>http://site.com/products?category=shoes#reviews</span></p>\n        <ul style={{color:'#06b6d4',margin:0,paddingLeft:'20px',lineHeight:'1.5'}}>\n          <li><strong>pathname:</strong> {location.pathname}</li>\n          <li><strong>search:</strong> {location.search}</li>\n          <li><strong>hash:</strong> {location.hash}</li>\n        </ul>\n        <div style={{marginTop:'12px',paddingTop:'12px',borderTop:'1px solid #444'}}>\n          <span style={{color:'#f59e0b',fontWeight:'bold'}}>Parsed Query:</span> Category = {category}\n        </div>\n      </div>\n    </div>\n  );\n}\n\nrender(<LocationDemo />);`,
+        xpReward: 15,
+        levelRequired: 6,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 101,
+        title: 'Protected Routes',
+        shortDescription: 'Restrict access to specific routes based on authentication state.',
+        fullExplanation: 'React Router does not have a built-in "Protected Route" component. Instead, you build your own wrapper component. This wrapper reads the user\'s authentication status (often from Context). If the user is authenticated, it renders the requested `element`. If not, it uses a `<Navigate to="/login" replace />` component to redirect them away seamlessly.',
+        exampleCode: `function ProtectedRouteDemo() {\n  const [isAuthenticated, setIsAuthenticated] = React.useState(false);\n  const [route, setRoute] = React.useState('/dashboard');\n\n  // This simulates the logic inside a <ProtectedRoute> wrapper\n  const isAccessBlocked = route === '/dashboard' && !isAuthenticated;\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛡️ Protected Routes</h3>\n      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>\n        <p style={{color:'#888',margin:0}}>Status: {isAuthenticated ? <span style={{color:'#10b981'}}>Logged In</span> : <span style={{color:'#ef4444'}}>Guest</span>}</p>\n        <button \n          onClick={() => setIsAuthenticated(!isAuthenticated)}\n          style={{padding:'4px 8px',background:'#333',color:'#fff',border:'none',borderRadius:'4px'}}\n        >\n          Toggle Auth\n        </button>\n      </div>\n      \n      <div style={{display:'flex',gap:'8px',marginBottom:'16px'}}>\n        <button onClick={() => setRoute('/home')} style={{flex:1,padding:'8px'}}>Go to /home (Public)</button>\n        <button onClick={() => setRoute('/dashboard')} style={{flex:1,padding:'8px'}}>Go to /dashboard (Protected)</button>\n      </div>\n\n      <div style={{padding:'20px',background:'#1a1a2e',borderRadius:'8px',textAlign:'center'}}>\n        {isAccessBlocked ? (\n          <div>\n             <span style={{fontSize:'30px'}}>🛑</span>\n             <p style={{color:'#ef4444',marginBottom:0}}>Access Denied. Redirecting to /login...</p>\n          </div>\n        ) : (\n          <div style={{color:'#10b981'}}>\n            <span style={{fontSize:'30px'}}>✅</span>\n            <p style={{marginBottom:0}}>Welcome to {route}!</p>\n          </div>\n        )}\n      </div>\n    </div>\n  );\n}\n\nrender(<ProtectedRouteDemo />);`,
+        xpReward: 20,
+        levelRequired: 6,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 102,
+        title: 'Lazy Loaded Routes',
+        shortDescription: 'Combine React.lazy and Routes to drastically improve initial load time.',
+        fullExplanation: 'By lazy loading your route components (e.g., `const Dashboard = React.lazy(() => import("./Dashboard"))`), the code for the Dashboard is never downloaded until the user actually navigates to `/dashboard`. You must wrap your `<Routes>` (or individual routes) in a `<Suspense>` component to provide a fallback UI while Webpack fetches the route\'s JS file over the network.',
+        exampleCode: `function LazyRoutesConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⚡ Lazy Loaded Routes</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        const Dashboard = React.<span style={{color:'#f59e0b'}}>lazy</span>(() =&gt; import('./Dashboard'));<br/>\n        const Profile = React.<span style={{color:'#f59e0b'}}>lazy</span>(() =&gt; import('./Profile'));<br/><br/>\n        function AppRoutes() {'{'}<br/>\n        &nbsp;&nbsp;return (<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span style={{color:'#10b981'}}>Suspense</span> fallback=&#123;&lt;Loader /&gt;&#125;&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Routes&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Route path="/app" element=&#123;&lt;Dashboard /&gt;&#125; /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Route path="/users" element=&#123;&lt;Profile /&gt;&#125; /&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Routes&gt;<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span style={{color:'#10b981'}}>Suspense</span>&gt;<br/>\n        &nbsp;&nbsp;);<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'12px'}}>\n        This is the most critical performance optimization in any large React SPA.\n      </p>\n    </div>\n  );\n}\n\nrender(<LazyRoutesConcept />);`,
+        xpReward: 20,
+        levelRequired: 6,
+        difficulty: 'Advanced'
     }
 ];
 
