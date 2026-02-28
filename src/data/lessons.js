@@ -1025,6 +1025,107 @@ const lessons = [
         xpReward: 20,
         levelRequired: 6,
         difficulty: 'Advanced'
+    },
+    // ===== LEVEL 8 — Data Fetching & Server State =====
+    {
+        id: 103,
+        title: 'Fetch API',
+        shortDescription: 'The native browser API for making HTTP requests.',
+        fullExplanation: 'The `fetch()` API is built into modern browsers. It allows you to make network requests (like GET, POST) to retrieve data from a server. It returns a Promise that resolves to the Response object representing the response to the request. You typically use it inside a `useEffect` hook to load data when a component mounts.',
+        exampleCode: `function FetchDemo() {\n  const [data, setData] = React.useState(null);\n\n  React.useEffect(() => {\n    // fetch gets a Promise of the Response\n    fetch('https://jsonplaceholder.typicode.com/users/1')\n      .then(response => response.json()) // Parse JSON\n      .then(json => setData(json));\n  }, []);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🌐 Fetch API</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333'}}>\n        {data ? (\n          <div>\n             <p style={{margin:'0 0 8px',color:'#10b981'}}>Name: <strong>{data.name}</strong></p>\n             <p style={{margin:0,color:'#06b6d4'}}>Email: {data.email}</p>\n          </div>\n        ) : (\n          <span style={{color:'#888'}}>Loading data...</span>\n        )}\n      </div>\n    </div>\n  );\n}\n\nrender(<FetchDemo />);`,
+        xpReward: 10,
+        levelRequired: 7,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 104,
+        title: 'Axios',
+        shortDescription: 'A popular, feature-rich HTTP client library for React.',
+        fullExplanation: 'While `fetch` is native, many teams prefer `axios` because it automatically transforms JSON data (no need for `.json()`), has built-in timeout support, intercepts requests/responses (useful for adding auth tokens), and provides much cleaner error handling for 4xx/5xx HTTP statuses.',
+        exampleCode: `function AxiosConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🦅 Axios</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px dashed #7c3aed',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#f59e0b'}}>import</span> axios <span style={{color:'#f59e0b'}}>from</span> 'axios';<br/><br/>\n        <span style={{color:'#888'}}>// Inside useEffect</span><br/>\n        axios.get('/api/users/1')<br/>\n        &nbsp;&nbsp;.then(response =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#888'}}>// Data is already parsed!</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;setData(response.<span style={{color:'#10b981'}}>data</span>);<br/>\n        &nbsp;&nbsp;{'}'})<br/>\n        &nbsp;&nbsp;.catch(error =&gt; {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#888'}}>// Automatically catches 404s and 500s</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;console.error(error.response.status);<br/>\n        &nbsp;&nbsp;{'}'});\n      </div>\n      <p style={{color:'#888',fontSize:'13px',marginTop:'12px'}}>\n        Axios is highly recommended for complex enterprise applications.\n      </p>\n    </div>\n  );\n}\n\nrender(<AxiosConcept />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 105,
+        title: 'Loading States',
+        shortDescription: 'Keep users informed while asynchronous data is fetching.',
+        fullExplanation: 'Networks take time. If you don\'t render a loading indicator (like a spinner or skeleton screen), the user will stare at a blank screen or broken UI and assume the app is frozen. Always track a boolean `isLoading` state alongside your data state to provide immediate visual feedback.',
+        exampleCode: `function LoadingStateDemo() {\n  const [isLoading, setIsLoading] = React.useState(false);\n  const [data, setData] = React.useState('');\n\n  const fetchData = () => {\n    setIsLoading(true);\n    setData('');\n    \n    // Simulate a slow 2-second network request\n    setTimeout(() => {\n      setData('🚀 Server data received!');\n      setIsLoading(false);\n    }, 2000);\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>⏳ Loading States</h3>\n      <button \n        onClick={fetchData} \n        disabled={isLoading}\n        style={{padding:'8px 16px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'4px',cursor:isLoading?'not-allowed':'pointer'}}\n      >\n        {isLoading ? 'Fetching...' : 'Get Data'}\n      </button>\n      <div style={{marginTop:'16px',minHeight:'40px'}}>\n        {isLoading && <span style={{color:'#f59e0b',fontWeight:'bold'}}>Loading... ⌛</span>}\n        {!isLoading && data && <span style={{color:'#10b981',fontWeight:'bold'}}>{data}</span>}\n      </div>\n    </div>\n  );\n}\n\nrender(<LoadingStateDemo />);`,
+        xpReward: 10,
+        levelRequired: 7,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 106,
+        title: 'Error Handling',
+        shortDescription: 'Gracefully handle failed network requests to prevent crashes.',
+        fullExplanation: 'APIs fail. Networks drop. Servers crash. A robust React app must catch these errors using a `try/catch` block (for async/await) or `.catch()` (for promises), save the error to a React state variable (`const [error, setError] = useState(null)`), and render a friendly fallback UI allowing the user to try again.',
+        exampleCode: `function ErrorHandlingDemo() {\n  const [error, setError] = React.useState(null);\n\n  const fetchBrokenAPI = () => {\n    setError(null);\n    // Simulating a network failure\n    setTimeout(() => {\n      setError('HTTP 503: Service Unavailable. The database is currently down.');\n    }, 800);\n  };\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🛑 Error Handling</h3>\n      <button onClick={fetchBrokenAPI} style={{padding:'8px 16px',background:'#2e1a1a',color:'#ef4444',border:'1px solid #ef4444',borderRadius:'4px',cursor:'pointer'}}>\n        Call Broken API\n      </button>\n      \n      {error && (\n        <div style={{marginTop:'16px',padding:'12px',background:'#3b1a1a',borderLeft:'4px solid #ef4444',borderRadius:'4px'}}>\n           <h4 style={{margin:'0 0 4px',color:'#ef4444'}}>Oops! Something went wrong.</h4>\n           <p style={{margin:0,color:'#ffb3b3',fontSize:'14px'}}>{error}</p>\n           <button onClick={() => setError(null)} style={{marginTop:'12px',padding:'4px 8px',background:'transparent',color:'#ef4444',border:'1px solid #ef4444',borderRadius:'4px'}}>Dismiss</button>\n        </div>\n      )}\n    </div>\n  );\n}\n\nrender(<ErrorHandlingDemo />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 107,
+        title: 'Retry Logic',
+        shortDescription: 'Automatically attempt to refetch data if a request fails.',
+        fullExplanation: 'Often, network errors are transient (a temporary drop in WiFi). Instead of immediately showing a failure screen, robust apps implement exponential backoff retry logic. If a request fails, it waits 1 second, tries again. If it fails, it waits 2 seconds, then 4 seconds. If it fails 3 times, then it finally shows the error UI.',
+        exampleCode: `function RetryConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔁 Retry Logic</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        async function fetchWithRetry(url, retries = 3) {'{'}<br/>\n        &nbsp;&nbsp;try {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;const res = await fetch(url);<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;if (!res.ok) throw new Error('Bad Status');<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;return await res.json();<br/>\n        &nbsp;&nbsp;{'}'} catch (err) {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;if (retries &gt; 0) {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:'#f59e0b'}}>// Wait 1s then try again!</span><br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;await new Promise(r =&gt; setTimeout(r, 1000));<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <span style={{color:'#10b981'}}>fetchWithRetry</span>(url, retries - 1);<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;{'}'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;throw err; <span style={{color:'#888'}}>// Finally fail</span><br/>\n        &nbsp;&nbsp;{'}'}<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'12px'}}>\n        Libraries like React Query have this logic built-in automatically!\n      </p>\n    </div>\n  );\n}\n\nrender(<RetryConcept />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 108,
+        title: 'Optimistic UI Updates',
+        shortDescription: 'Update the UI instantly, assuming the server request will succeed.',
+        fullExplanation: 'When a user "Likes" a post, waiting 500ms for the server to confirm before turning the heart red feels sluggish. Optimistic UI instantly updates the local state to red, making the app feel extremely fast. In the background, it sends the API request. If the request fails, it instantly rolls back the state to unliked and shows a toast error.',
+        exampleCode: `function OptimisticDemo() {\n  const [liked, setLiked] = React.useState(false);\n\n  const handleLike = () => {\n    // 1. OPTIMISTIC UPDATE: Update UI instantly\n    setLiked(true);\n    \n    // 2. Perform background request\n    setTimeout(() => {\n      // 3. Simulate a server failure 50% of the time\n      const didFail = Math.random() > 0.5;\n      if (didFail) {\n        // 4. ROLLBACK UI on failure\n        setLiked(false);\n        alert('Network Error. Failed to like post. Rolling back state.');\n      }\n    }, 1000);\n  };\n\n  return (\n    <div style={{textAlign:'center'}}>\n      <h3 style={{color:'#7c3aed'}}>✨ Optimistic UI</h3>\n      <p style={{color:'#888',fontSize:'13px',marginBottom:'16px'}}>\n        Click the heart. It turns red instantly. 1 sec later, the server might randomly reject it, forcing a UI rollback.\n      </p>\n      <button \n        onClick={liked ? undefined : handleLike}\n        style={{background:'none',border:'none',fontSize:'40px',cursor:liked?'default':'pointer',transition:'transform 0.1s',transform:liked?'scale(1.1)':'scale(1)'}}\n      >\n        {liked ? '❤️' : '🤍'}\n      </button>\n    </div>\n  );\n}\n\nrender(<OptimisticDemo />);`,
+        xpReward: 20,
+        levelRequired: 7,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 109,
+        title: 'Pagination',
+        shortDescription: 'Fetch data in chunks (pages) rather than all at once.',
+        fullExplanation: 'Returning 10,000 rows from an API will crash the browser. Pagination limits the payload size by requesting a specific "page" (e.g., `?page=2&limit=20`). In React, you store the `currentPage` in state. When the user clicks "Next Page", you update the state, which triggers a `useEffect` to fetch the new page of data.',
+        exampleCode: `function PaginationDemo() {\n  const [page, setPage] = React.useState(1);\n\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📄 Pagination</h3>\n      <div style={{padding:'20px',background:'#1a1a2e',borderRadius:'8px',textAlign:'center'}}\n      >\n        <p style={{color:'#ccc',marginBottom:'16px'}}>\n           Currently viewing <strong>Page {page}</strong> of data.\n        </p>\n        <div style={{display:'flex',justifyContent:'center',gap:'8px'}}>\n          <button \n            onClick={() => setPage(p => Math.max(1, p - 1))}\n            disabled={page === 1}\n            style={{padding:'6px 12px',background:page===1?'#333':'#3b82f6',color:'#fff',border:'none',borderRadius:'4px'}}\n          >\n            Previous\n          </button>\n          <button \n            onClick={() => setPage(p => p + 1)}\n            style={{padding:'6px 12px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:'4px'}}\n          >\n            Next Page\n          </button>\n        </div>\n        <p style={{color:'#06b6d4',fontSize:'12px',marginTop:'16px'}}>\n           API Call: <code style={{background:'#000',padding:'2px 4px'}}>/api/items?page={page}&amp;limit=10</code>\n        </p>\n      </div>\n    </div>\n  );\n}\n\nrender(<PaginationDemo />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Intermediate'
+    },
+    {
+        id: 110,
+        title: 'Infinite Scroll',
+        shortDescription: 'Automatically load more data when the user scrolls to the bottom.',
+        fullExplanation: 'Instead of explicit Next/Previous buttons, Infinite Scroll uses the Intersection Observer API (or a scroll event listener) to detect when the last item enters the viewport. When it does, it increments the page number and *appends* the new API results to the existing data array, rather than replacing them.',
+        exampleCode: `function InfiniteScrollConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>📜 Infinite Scroll</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',border:'1px solid #333',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#888'}}>// Data state holds an array of all pages combined</span><br/>\n        const [items, setItems] = React.useState([]);<br/>\n        const [page, setPage] = React.useState(1);<br/><br/>\n        const fetchNextPage = async () =&gt; {'{'}<br/>\n        &nbsp;&nbsp;const newItems = await api.get(\`?page=\${page}\`);<br/>\n        &nbsp;&nbsp;<span style={{color:'#10b981'}}>// APPEND new items to existing list!</span><br/>\n        &nbsp;&nbsp;setItems(prev =&gt; [...prev, ...newItems]);<br/>\n        &nbsp;&nbsp;setPage(p =&gt; p + 1);<br/>\n        {'}'}\n      </div>\n      <p style={{color:'#888',fontSize:'12px',marginTop:'12px'}}>\n        Usually combined with a React <code>useRef</code> on the last DOM element to observe visibility.\n      </p>\n    </div>\n  );\n}\n\nrender(<InfiniteScrollConcept />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 111,
+        title: 'Caching Strategies',
+        shortDescription: 'Store fetched data in memory to avoid duplicate network requests.',
+        fullExplanation: 'If you navigate to a Profile page, fetch the data, navigate away, and navigate back, a naive app fetches the data again. Caching stores the response in memory (often keyed by the URL). On the second visit, it instantly displays the cached data, and then optionally re-fetches in the background to ensure it\'s up-to-date (Stale-While-Revalidate).',
+        exampleCode: `function CachingConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🧠 Caching Strategies</h3>\n      <ul style={{color:'#06b6d4',lineHeight:'1.6'}}>\n        <li>\n           <strong>SWR (Stale-While-Revalidate):</strong> Serve the old cached data instantly, fetch new data in the background, and seamlessly swap it in.\n        </li>\n        <li>\n           <strong>Deduplication:</strong> If two components request the exact same URL at the exact same time, only fire 1 network request and share the result.\n        </li>\n        <li>\n           <strong>Garbage Collection:</strong> If data in the cache hasn't been accessed in 5 minutes, delete it to free up RAM.\n        </li>\n      </ul>\n      <p style={{color:'#f59e0b',fontSize:'14px'}}>\n        Building this yourself is incredibly difficult. That's why we use state-of-the-art libraries.\n      </p>\n    </div>\n  );\n}\n\nrender(<CachingConcept />);`,
+        xpReward: 15,
+        levelRequired: 7,
+        difficulty: 'Advanced'
+    },
+    {
+        id: 112,
+        title: 'TanStack Query (React Query)',
+        shortDescription: 'The industry standard library for managing server state in React.',
+        fullExplanation: '`TanStack Query` (formerly `React Query`) is essentially a magical hook for data fetching. You give it a unique `queryKey` and an asynchronous fetch function. It automatically handles loading states, error states, caching, retries, background refetching, pagination, and deduping for you out-of-the-box. It replaces almost all `useEffect` fetching code.',
+        exampleCode: `function ReactQueryConcept() {\n  return (\n    <div>\n      <h3 style={{color:'#7c3aed'}}>🔮 TanStack Query</h3>\n      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:'8px',borderLeft:'4px solid #f59e0b',fontFamily:'monospace',fontSize:'13px',color:'#ccc',lineHeight:'1.6'}}>\n        <span style={{color:'#f59e0b'}}>import</span> { '{ useQuery }' } from '@tanstack/react-query';<br/><br/>\n        function Profile() {'{'}<br/>\n        &nbsp;&nbsp;<span style={{color:'#888'}}>// It does everything for you!</span><br/>\n        &nbsp;&nbsp;const {'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;data, <br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;isLoading, <br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;isError, <br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;error <br/>\n        &nbsp;&nbsp;{'}'} = <span style={{color:'#10b981'}}>useQuery</span>({'{'}<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;queryKey: ['user', 1],<br/>\n        &nbsp;&nbsp;&nbsp;&nbsp;queryFn: () =&gt; fetch('/api/user/1').then(r=&gt;r.json())<br/>\n        &nbsp;&nbsp;{'}'});<br/><br/>\n        &nbsp;&nbsp;if (isLoading) return &lt;Spinner /&gt;;<br/>\n        &nbsp;&nbsp;if (isError) return &lt;Error msg=&#123;error.message&#125; /&gt;;<br/>\n        &nbsp;&nbsp;return &lt;div&gt;&#123;data.name&#125;&lt;/div&gt;;<br/>\n        {'}'}\n      </div>\n    </div>\n  );\n}\n\nrender(<ReactQueryConcept />);`,
+        xpReward: 25,
+        levelRequired: 7,
+        difficulty: 'Advanced'
     }
 ];
 
